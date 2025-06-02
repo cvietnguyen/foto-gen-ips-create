@@ -1,18 +1,10 @@
 
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Building2 } from 'lucide-react';
+import { LoginButton } from '@/auth/LoginButton';
 
 const LoginPage = () => {
-  const navigate = useNavigate();
-
-  const handleLogin = () => {
-    // In real implementation, this would handle Azure AD authentication
-    navigate('/home');
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 p-4">
       <Card className="w-full max-w-md shadow-xl border-0 bg-white/80 backdrop-blur-sm">
@@ -37,13 +29,7 @@ const LoginPage = () => {
         </CardHeader>
         
         <CardContent className="pb-12">
-          <Button 
-            onClick={handleLogin}
-            className="w-full text-white font-semibold py-6 text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
-            style={{ background: `linear-gradient(to right, #17428c, #125597)` }}
-          >
-            Sign in with Azure AD
-          </Button>
+          <LoginButton />
           
           <div className="mt-6 text-center">
             <p className="text-xs text-gray-400">
