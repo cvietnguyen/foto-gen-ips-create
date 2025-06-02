@@ -1,8 +1,7 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
-import LoginPage from './LoginPage';
-import HomePage from './HomePage';
 import DemoControls from '@/components/DemoControls';
 
 interface ModelInfo {
@@ -12,10 +11,20 @@ interface ModelInfo {
 }
 
 const Index = () => {
+  const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userHasModel, setUserHasModel] = useState(false);
   const [modelInfo, setModelInfo] = useState<ModelInfo | undefined>(undefined);
   const [showDemoControls, setShowDemoControls] = useState(true);
+
+  // Redirect based on login status
+  useEffect(() => {
+    if (!isLoggedIn) {
+      navigate('/login');
+    } else {
+      navigate('/home');
+    }
+  }, [isLoggedIn, navigate]);
 
   const handleLogin = () => {
     setIsLoggedIn(true);
@@ -46,6 +55,7 @@ const Index = () => {
         });
       }
     }
+    navigate('/home');
   };
 
   // Demo control functions
@@ -87,6 +97,7 @@ const Index = () => {
     setIsLoggedIn(false);
     setUserHasModel(false);
     setModelInfo(undefined);
+    navigate('/login');
   };
 
   return (
@@ -100,19 +111,13 @@ const Index = () => {
         onDemoLogin={handleLogin}
         onDemoLogout={handleLogout}
         isLoggedIn={isLoggedIn}
+        userHasModel={userHasModel}
+        modelInfo={modelInfo}
+        onSwitchToUserModel={handleSwitchToUserModel}
       />
       
       <div className={showDemoControls ? 'pt-16' : ''}>
-        {!isLoggedIn ? (
-          <LoginPage onLogin={handleLogin} />
-        ) : (
-          <HomePage 
-            onLogout={handleLogout} 
-            userHasModel={userHasModel} 
-            modelInfo={modelInfo}
-            onSwitchToUserModel={handleSwitchToUserModel}
-          />
-        )}
+        {/* Content will be handled by navigation */}
       </div>
     </Layout>
   );

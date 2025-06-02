@@ -1,10 +1,11 @@
+
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Sparkles, Upload, FileText, Clock, Mail, ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 
 const TrainingPage = () => {
   const navigate = useNavigate();
@@ -42,19 +43,19 @@ const TrainingPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-3">
-              <Button variant="ghost" size="sm" onClick={() => navigate('/')}>
+              <Button variant="ghost" size="sm" onClick={() => navigate('/home')}>
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back
               </Button>
               <div 
                 className="p-2 rounded-lg bg-gradient-to-r from-purple-600 to-blue-600 cursor-pointer"
-                onClick={() => navigate('/')}
+                onClick={() => navigate('/home')}
               >
                 <Sparkles className="h-6 w-6 text-white" />
               </div>
               <h1 
                 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent cursor-pointer"
-                onClick={() => navigate('/')}
+                onClick={() => navigate('/home')}
               >
                 FotoGen
               </h1>

@@ -1,11 +1,11 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Sparkles, User, LogOut, Zap, Upload, Image as ImageIcon, Loader2, RefreshCw, Users, ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 
 interface ModelInfo {
   id: string;
@@ -14,13 +14,12 @@ interface ModelInfo {
 }
 
 interface HomePageProps {
-  onLogout: () => void;
-  userHasModel: boolean;
+  userHasModel?: boolean;
   modelInfo?: ModelInfo;
   onSwitchToUserModel?: () => void;
 }
 
-const HomePage = ({ onLogout, userHasModel, modelInfo, onSwitchToUserModel }: HomePageProps) => {
+const HomePage = ({ userHasModel = false, modelInfo, onSwitchToUserModel }: HomePageProps) => {
   const navigate = useNavigate();
   const [prompt, setPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -39,6 +38,10 @@ const HomePage = ({ onLogout, userHasModel, modelInfo, onSwitchToUserModel }: Ho
 
   const handleTrainModel = () => {
     navigate('/training');
+  };
+
+  const handleLogout = () => {
+    navigate('/login');
   };
 
   return (
@@ -61,7 +64,7 @@ const HomePage = ({ onLogout, userHasModel, modelInfo, onSwitchToUserModel }: Ho
                 <User className="h-3 w-3" />
                 IPS User
               </Badge>
-              <Button variant="ghost" size="sm" onClick={onLogout}>
+              <Button variant="ghost" size="sm" onClick={handleLogout}>
                 <LogOut className="h-4 w-4 mr-2" />
                 Logout
               </Button>

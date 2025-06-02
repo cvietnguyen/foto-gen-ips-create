@@ -1,7 +1,14 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Settings } from 'lucide-react';
+
+interface ModelInfo {
+  id: string;
+  ownerName: string;
+  isOwnedByUser: boolean;
+}
 
 interface DemoControlsProps {
   isVisible: boolean;
@@ -12,6 +19,9 @@ interface DemoControlsProps {
   onDemoLogin?: () => void;
   onDemoLogout?: () => void;
   isLoggedIn: boolean;
+  userHasModel?: boolean;
+  modelInfo?: ModelInfo;
+  onSwitchToUserModel?: () => void;
 }
 
 const DemoControls = ({ 
@@ -22,8 +32,23 @@ const DemoControls = ({
   onDemoSetOtherModel,
   onDemoLogin,
   onDemoLogout,
-  isLoggedIn 
+  isLoggedIn,
+  userHasModel,
+  modelInfo,
+  onSwitchToUserModel
 }: DemoControlsProps) => {
+  const navigate = useNavigate();
+
+  const handleLogin = () => {
+    onDemoLogin?.();
+    navigate('/home');
+  };
+
+  const handleLogout = () => {
+    onDemoLogout?.();
+    navigate('/login');
+  };
+
   if (!isVisible) {
     return (
       <div className="fixed top-4 right-4 z-50">
@@ -48,7 +73,7 @@ const DemoControls = ({
             <span className="text-sm font-medium text-yellow-800">Demo Controls:</span>
             <div className="flex gap-2">
               {!isLoggedIn ? (
-                <Button onClick={onDemoLogin} size="sm" variant="outline" className="text-xs">
+                <Button onClick={handleLogin} size="sm" variant="outline" className="text-xs">
                   Login
                 </Button>
               ) : (
@@ -62,7 +87,7 @@ const DemoControls = ({
                   <Button onClick={onDemoSetOtherModel} size="sm" variant="outline" className="text-xs">
                     Using Other's Model
                   </Button>
-                  <Button onClick={onDemoLogout} size="sm" variant="outline" className="text-xs">
+                  <Button onClick={handleLogout} size="sm" variant="outline" className="text-xs">
                     Logout
                   </Button>
                 </>
