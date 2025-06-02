@@ -4,15 +4,22 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, User, LogOut, Zap, Upload, Image as ImageIcon, Loader2, RefreshCw } from 'lucide-react';
+import { Sparkles, User, LogOut, Zap, Upload, Image as ImageIcon, Loader2, RefreshCw, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+
+interface ModelInfo {
+  id: string;
+  ownerName: string;
+  isOwnedByUser: boolean;
+}
 
 interface HomePageProps {
   onLogout: () => void;
   userHasModel: boolean;
+  modelInfo?: ModelInfo;
 }
 
-const HomePage = ({ onLogout, userHasModel }: HomePageProps) => {
+const HomePage = ({ onLogout, userHasModel, modelInfo }: HomePageProps) => {
   const navigate = useNavigate();
   const [prompt, setPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -63,7 +70,7 @@ const HomePage = ({ onLogout, userHasModel }: HomePageProps) => {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {userHasModel ? (
+        {userHasModel && modelInfo ? (
           /* Model exists - show generation interface */
           <div className="space-y-8">
             <div className="text-center">
@@ -71,20 +78,35 @@ const HomePage = ({ onLogout, userHasModel }: HomePageProps) => {
                 Generate Your Images
               </h2>
               <p className="text-gray-600">
-                Use your trained model to create amazing images from text prompts
+                Use {modelInfo.isOwnedByUser ? 'your trained model' : `${modelInfo.ownerName}'s model`} to create amazing images from text prompts
               </p>
             </div>
 
-            {/* Retrain Model Button */}
-            <div className="flex justify-center">
-              <Button 
-                onClick={handleTrainModel}
-                variant="outline"
-                className="flex items-center gap-2 text-purple-600 border-purple-200 hover:bg-purple-50"
-              >
-                <RefreshCw className="h-4 w-4" />
-                Retrain Model
-              </Button>
+            {/* Model Info & Actions */}
+            <div className="flex justify-center items-center gap-4">
+              <Badge variant="outline" className="flex items-center gap-2 px-3 py-1">
+                {modelInfo.isOwnedByUser ? (
+                  <User className="h-4 w-4 text-green-600" />
+                ) : (
+                  <Users className="h-4 w-4 text-blue-600" />
+                )}
+                <span className="text-sm">
+                  Model by: <strong>{modelInfo.ownerName}</strong>
+                </span>
+                <span className="text-xs text-gray-500">({modelInfo.id})</span>
+              </Badge>
+              
+              {modelInfo.isOwnedByUser && (
+                <Button 
+                  onClick={handleTrainModel}
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center gap-2 text-purple-600 border-purple-200 hover:bg-purple-50"
+                >
+                  <RefreshCw className="h-4 w-4" />
+                  Retrain Model
+                </Button>
+              )}
             </div>
 
             <div className="grid lg:grid-cols-2 gap-8">
