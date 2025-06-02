@@ -5,21 +5,28 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Sparkles, Clock, Mail, ArrowLeft, Image, Upload } from 'lucide-react';
 import { useDemoContext } from '@/contexts/DemoContext';
+import { uploadZipFile, trainModel } from '@/services/apiService';
+import { useToast } from '@/hooks/use-toast';
+import JSZip from 'jszip';
 
 const TrainingPage = () => {
   const navigate = useNavigate();
   const { showDemoControls } = useDemoContext();
+  const { toast } = useToast();
   const [isTraining, setIsTraining] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string>('');
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 
   // Mock training images data
   const trainingImages = [
     { id: 1, src: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face', alt: 'Training image 1' },
     { id: 2, src: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=200&h=200&fit=crop&crop=face', alt: 'Training image 2' },
     { id: 3, src: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face', alt: 'Training image 3' },
-    { id: 4, src: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=face', alt: 'Training image 4' },
+    { id: 4, src: 'https://images.unsplash.com/photo-1500648741775-53994a69daeb?w=200&h=200&fit=crop&crop=face', alt: 'Training image 4' },
     { id: 5, src: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop&crop=face', alt: 'Training image 5' },
     { id: 6, src: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop&crop=face', alt: 'Training image 6' },
-    { id: 7, src: 'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=200&h=200&fit=crop&crop=face', alt: 'Training image 7' },
+    { id: 7, src: 'https://images.unsplash.com/photo-1519345182560-472988babdf9?w=200&h=200&fit=crop&crop=face', alt: 'Training image 7' },
     { id: 8, src: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop&crop=face', alt: 'Training image 8' },
     { id: 9, src: 'https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=200&h=200&fit=crop&crop=face', alt: 'Training image 9' },
     { id: 10, src: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=face', alt: 'Training image 10' },
@@ -30,15 +37,96 @@ const TrainingPage = () => {
     { id: 15, src: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=200&h=200&fit=crop&crop=face', alt: 'Training image 15' },
   ];
 
-  const handleStartTraining = async () => {
-    setIsTraining(true);
+  const generateModelId = () => {
+    return 'model-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
   };
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const createZipFile = async (files: File[], modelId: string): Promise<File> => {
+    const zip = new JSZip();
+    
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const fileExtension = file.name.split('.').pop();
+      const fileName = `image_${i + 1}.${fileExtension}`;
+      zip.file(fileName, file);
+    }
+
+    const zipBlob = await zip.generateAsync({ type: 'blob' });
+    return new File([zipBlob], `${modelId}.zip`, { type: 'application/zip' });
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
-    if (files) {
-      console.log('Files uploaded:', files);
-      // Handle file upload logic here
+    if (!files || files.length === 0) return;
+
+    const fileArray = Array.from(files);
+    setUploadedFiles(fileArray);
+    setIsUploading(true);
+
+    try {
+      // Generate model ID
+      const modelId = generateModelId();
+      console.log('Generated model ID:', modelId);
+
+      // Create zip file
+      const zipFile = await createZipFile(fileArray, modelId);
+      console.log('Created zip file:', zipFile);
+
+      // Upload zip file
+      const uploadResponse = await uploadZipFile(zipFile, modelId);
+      
+      if (uploadResponse.success) {
+        setUploadedImageUrl(uploadResponse.url);
+        toast({
+          title: 'Upload Successful',
+          description: `${fileArray.length} images uploaded and zipped successfully.`,
+        });
+      } else {
+        throw new Error(uploadResponse.message || 'Upload failed');
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast({
+        title: 'Upload Failed',
+        description: 'Failed to upload and zip images. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleStartTraining = async () => {
+    if (!uploadedImageUrl) {
+      toast({
+        title: 'No Images Uploaded',
+        description: 'Please upload images before starting training.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setIsTraining(true);
+
+    try {
+      const trainResponse = await trainModel({ ImageUrl: uploadedImageUrl });
+      
+      if (trainResponse.success) {
+        toast({
+          title: 'Training Started',
+          description: 'Your model training has begun successfully.',
+        });
+      } else {
+        throw new Error(trainResponse.message || 'Training failed to start');
+      }
+    } catch (error) {
+      console.error('Training error:', error);
+      toast({
+        title: 'Training Failed',
+        description: 'Failed to start model training. Please try again.',
+        variant: 'destructive',
+      });
+      setIsTraining(false);
     }
   };
 
@@ -99,17 +187,28 @@ const TrainingPage = () => {
                       multiple
                       accept="image/*"
                       onChange={handleFileUpload}
+                      disabled={isUploading}
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                     />
                     <Button
+                      disabled={isUploading}
                       className="text-white font-semibold px-6 py-3"
                       style={{ background: `linear-gradient(to right, #17428c, #125597)` }}
                     >
                       <Upload className="h-4 w-4 mr-2" />
-                      Upload Images
+                      {isUploading ? 'Uploading...' : 'Upload Images'}
                     </Button>
                   </div>
                 </div>
+
+                {/* Upload Status */}
+                {uploadedFiles.length > 0 && (
+                  <div className="p-4 rounded-lg border border-green-200" style={{ backgroundColor: 'rgba(34, 197, 94, 0.05)' }}>
+                    <p className="text-sm text-green-700">
+                      ✓ {uploadedFiles.length} images uploaded and ready for training
+                    </p>
+                  </div>
+                )}
 
                 {/* Images Grid */}
                 <div className="grid grid-cols-5 gap-4">
@@ -136,6 +235,7 @@ const TrainingPage = () => {
 
                 <Button
                   onClick={handleStartTraining}
+                  disabled={!uploadedImageUrl}
                   className="w-full text-white font-semibold py-3"
                   style={{ background: `linear-gradient(to right, #17428c, #125597)` }}
                 >

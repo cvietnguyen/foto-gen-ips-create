@@ -1,4 +1,3 @@
-
 const API_BASE_URL = 'http://localhost:5208/api/integration';
 
 export interface GeneratePhotoRequest {
@@ -17,6 +16,22 @@ export interface CheckUserModelResponse {
   modelName?: string;
   success: boolean;
   message?: string;
+}
+
+export interface UploadZipResponse {
+  url: string;
+  success: boolean;
+  message?: string;
+}
+
+export interface TrainModelRequest {
+  ImageUrl: string;
+}
+
+export interface TrainModelResponse {
+  success: boolean;
+  message?: string;
+  modelId?: string;
 }
 
 // 1. API to check if user has model or not
@@ -98,6 +113,67 @@ export const loginWithAzureAD = async (): Promise<{ success: boolean; token?: st
     return {
       success: false,
       message: 'Failed to login with Azure AD'
+    };
+  }
+};
+
+// 4. Upload zip file
+export const uploadZipFile = async (zipFile: File, modelId: string): Promise<UploadZipResponse> => {
+  try {
+    const formData = new FormData();
+    formData.append('file', zipFile);
+    formData.append('modelId', modelId);
+
+    const response = await fetch(`${API_BASE_URL}/uploading-zip-file`, {
+      method: 'POST',
+      headers: {
+        // Don't set Content-Type for FormData, let browser set it
+        // Add authorization header if needed
+        // 'Authorization': `Bearer ${getAuthToken()}`
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error uploading zip file:', error);
+    return {
+      url: '',
+      success: false,
+      message: 'Failed to upload zip file'
+    };
+  }
+};
+
+// 5. Train model
+export const trainModel = async (request: TrainModelRequest): Promise<TrainModelResponse> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/train-model`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        // Add authorization header if needed
+        // 'Authorization': `Bearer ${getAuthToken()}`
+      },
+      body: JSON.stringify(request),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error training model:', error);
+    return {
+      success: false,
+      message: 'Failed to train model'
     };
   }
 };
