@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -40,7 +41,7 @@ const TrainingPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       {/* Header */}
-      <header className={`bg-white/80 backdrop-blur-sm border-b border-gray-200 ${showDemoControls ? 'mt-16' : ''}`}>
+      <header className={`bg-white border-b border-gray-200 ${showDemoControls ? 'mt-16' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-3">
@@ -48,14 +49,15 @@ const TrainingPage = () => {
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back
               </Button>
-              <div 
-                className="p-2 rounded-lg bg-gradient-to-r from-purple-600 to-blue-600 cursor-pointer"
+              <img 
+                src="https://www.ips-ag.com/wp-content/themes/ips-group-v1/images/ips-logo-no-claim.svg" 
+                alt="IPS Logo" 
+                className="h-8 cursor-pointer"
                 onClick={() => navigate('/home')}
-              >
-                <Sparkles className="h-6 w-6 text-white" />
-              </div>
+              />
               <h1 
-                className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent cursor-pointer"
+                className="text-2xl font-bold cursor-pointer"
+                style={{ color: '#17428c' }}
                 onClick={() => navigate('/home')}
               >
                 FotoGen
@@ -78,7 +80,7 @@ const TrainingPage = () => {
         <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Upload className="h-5 w-5 text-purple-600" />
+              <Upload className="h-5 w-5" style={{ color: '#17428c' }} />
               Upload Training Data
             </CardTitle>
           </CardHeader>
@@ -96,7 +98,11 @@ const TrainingPage = () => {
                         type="file"
                         accept=".zip,application/zip,application/x-zip-compressed"
                         onChange={handleFileChange}
-                        className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
+                        className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:text-white"
+                        style={{ 
+                          '--file-bg': 'linear-gradient(to right, #17428c, #125597)',
+                          background: 'var(--file-bg)'
+                        } as React.CSSProperties & { '--file-bg': string }}
                       />
                     </div>
                     {selectedFile && (
@@ -116,9 +122,9 @@ const TrainingPage = () => {
                     </div>
                   )}
 
-                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                    <h4 className="font-medium text-blue-900 mb-2">Training Requirements:</h4>
-                    <ul className="text-sm text-blue-700 space-y-1">
+                  <div className="p-4 rounded-lg border border-blue-200" style={{ backgroundColor: 'rgba(23, 66, 140, 0.05)' }}>
+                    <h4 className="font-medium mb-2" style={{ color: '#17428c' }}>Training Requirements:</h4>
+                    <ul className="text-sm space-y-1" style={{ color: '#125597' }}>
                       <li>• Upload 10-20 high-quality images in ZIP format</li>
                       <li>• Images should be at least 512x512 pixels</li>
                       <li>• Supported formats: JPG, PNG</li>
@@ -129,7 +135,8 @@ const TrainingPage = () => {
                   <Button
                     onClick={handleStartTraining}
                     disabled={!selectedFile}
-                    className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3"
+                    className="w-full text-white font-semibold py-3"
+                    style={{ background: `linear-gradient(to right, #17428c, #125597)` }}
                   >
                     <Upload className="h-4 w-4 mr-2" />
                     Start Training Model
@@ -138,8 +145,8 @@ const TrainingPage = () => {
               </>
             ) : (
               <div className="text-center space-y-6">
-                <div className="p-8 rounded-full bg-gradient-to-r from-purple-100 to-blue-100 w-32 h-32 mx-auto flex items-center justify-center">
-                  <Clock className="h-12 w-12 text-purple-600 animate-pulse" />
+                <div className="p-8 rounded-full w-32 h-32 mx-auto flex items-center justify-center" style={{ background: `linear-gradient(to right, rgba(23, 66, 140, 0.1), rgba(18, 85, 151, 0.1))` }}>
+                  <Clock className="h-12 w-12 animate-pulse" style={{ color: '#17428c' }} />
                 </div>
                 
                 <div>
@@ -151,8 +158,8 @@ const TrainingPage = () => {
                   </p>
                 </div>
 
-                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                  <div className="flex items-center gap-2 text-blue-700 justify-center">
+                <div className="p-4 rounded-lg border border-blue-200" style={{ backgroundColor: 'rgba(23, 66, 140, 0.05)' }}>
+                  <div className="flex items-center gap-2 justify-center" style={{ color: '#125597' }}>
                     <Mail className="h-4 w-4" />
                     <span className="text-sm">You will receive an email notification when training is complete</span>
                   </div>
