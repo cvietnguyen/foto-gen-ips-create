@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -58,7 +57,7 @@ const TrainingPage = () => {
       const zipFile = await createZipFile(fileArray, modelId);
       console.log('Created zip file:', zipFile);
 
-      // Upload zip file
+      // Upload zip file using the API service
       const uploadResponse = await uploadZipFile(zipFile, modelId);
       
       if (uploadResponse.success) {
@@ -95,6 +94,7 @@ const TrainingPage = () => {
     setIsTraining(true);
 
     try {
+      // Use the trainModel API service
       const trainResponse = await trainModel({ ImageUrl: uploadedImageUrl });
       
       if (trainResponse.success) {
@@ -102,6 +102,7 @@ const TrainingPage = () => {
           title: 'Training Started',
           description: 'Your model training has begun successfully.',
         });
+        // Training has started successfully, keep the training state
       } else {
         throw new Error(trainResponse.message || 'Training failed to start');
       }

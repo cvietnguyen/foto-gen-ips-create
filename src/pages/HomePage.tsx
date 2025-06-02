@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Sparkles, User, LogOut, Zap, Upload, Image as ImageIcon, Loader2, RefreshCw, Users, ArrowLeft } from 'lucide-react';
+import { checkUserModelAvailable, generatePhoto } from '@/services/apiService';
+import { useToast } from '@/hooks/use-toast';
 
 interface ModelInfo {
   id: string;
@@ -20,27 +22,81 @@ interface HomePageProps {
 
 const HomePage = () => {
   const navigate = useNavigate();
-  // Remove demo context and hardcode some values for now
-  const userHasModel = true;
-  const modelInfo = {
-    id: 'model-123',
-    ownerName: 'IPS User',
-    isOwnedByUser: true
-  };
-  
+  const { toast } = useToast();
+  const [userHasModel, setUserHasModel] = useState<boolean>(false);
+  const [modelInfo, setModelInfo] = useState<ModelInfo | null>(null);
+  const [isLoadingModel, setIsLoadingModel] = useState(true);
   const [prompt, setPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
 
+  useEffect(() => {
+    checkUserModel();
+  }, []);
+
+  const checkUserModel = async () => {
+    setIsLoadingModel(true);
+    try {
+      const response = await checkUserModelAvailable();
+      
+      if (response.success) {
+        setUserHasModel(response.hasModel);
+        if (response.hasModel && response.modelName) {
+          setModelInfo({
+            id: response.modelName,
+            ownerName: 'IPS User',
+            isOwnedByUser: true
+          });
+        }
+      } else {
+        console.error('Failed to check user model:', response.message);
+        toast({
+          title: 'Error',
+          description: 'Failed to check model availability',
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      console.error('Error checking user model:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to check model availability',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoadingModel(false);
+    }
+  };
+
   const handleGenerate = async () => {
-    if (!prompt.trim()) return;
+    if (!prompt.trim() || !modelInfo) return;
     
     setIsGenerating(true);
-    // Simulate API call
-    setTimeout(() => {
-      setGeneratedImage(`https://picsum.photos/512/512?random=${Date.now()}`);
+    try {
+      const response = await generatePhoto({
+        ModelName: modelInfo.id,
+        Prompt: prompt
+      });
+      
+      if (response.success && response.imageUrl) {
+        setGeneratedImage(response.imageUrl);
+        toast({
+          title: 'Success',
+          description: 'Image generated successfully!',
+        });
+      } else {
+        throw new Error(response.message || 'Failed to generate image');
+      }
+    } catch (error) {
+      console.error('Error generating image:', error);
+      toast({
+        title: 'Generation Failed',
+        description: 'Failed to generate image. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
       setIsGenerating(false);
-    }, 3000);
+    }
   };
 
   const handleTrainModel = () => {
@@ -55,6 +111,17 @@ const HomePage = () => {
     // Placeholder function
     console.log('Switch to user model');
   };
+
+  if (isLoadingModel) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" style={{ color: '#17428c' }} />
+          <p className="text-gray-600">Checking your model...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
