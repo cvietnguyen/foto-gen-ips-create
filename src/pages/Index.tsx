@@ -1,13 +1,35 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import React, { useState } from 'react';
+import Layout from '@/components/Layout';
+import LoginPage from '@/components/LoginPage';
+import HomePage from '@/components/HomePage';
 
 const Index = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userHasModel, setUserHasModel] = useState(false); // This would come from API
+
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+    // In real implementation, this would handle Azure AD authentication
+    // and fetch user's model status
+    
+    // Simulate checking if user has a trained model (randomized for demo)
+    setUserHasModel(Math.random() > 0.5);
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setUserHasModel(false);
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
-    </div>
+    <Layout>
+      {!isLoggedIn ? (
+        <LoginPage onLogin={handleLogin} />
+      ) : (
+        <HomePage onLogout={handleLogout} userHasModel={userHasModel} />
+      )}
+    </Layout>
   );
 };
 
