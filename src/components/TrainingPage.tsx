@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -18,8 +17,19 @@ const TrainingPage = () => {
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file && file.type === 'application/zip') {
-      setSelectedFile(file);
+    if (file) {
+      // Check if it's a ZIP file by extension or MIME type
+      const isZipFile = file.name.toLowerCase().endsWith('.zip') || 
+                       file.type === 'application/zip' || 
+                       file.type === 'application/x-zip-compressed';
+      
+      if (isZipFile) {
+        setSelectedFile(file);
+        console.log('File selected:', file.name, 'Type:', file.type);
+      } else {
+        console.log('Invalid file type. Only ZIP files are allowed.');
+        event.target.value = ''; // Clear the input
+      }
     }
   };
 
@@ -99,11 +109,16 @@ const TrainingPage = () => {
                       <Input
                         id="zip-file"
                         type="file"
-                        accept=".zip"
+                        accept=".zip,application/zip,application/x-zip-compressed"
                         onChange={handleFileChange}
                         className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
                       />
                     </div>
+                    {selectedFile && (
+                      <p className="text-sm text-green-600 mt-1">
+                        File ready: {selectedFile.name}
+                      </p>
+                    )}
                   </div>
 
                   {selectedFile && (
