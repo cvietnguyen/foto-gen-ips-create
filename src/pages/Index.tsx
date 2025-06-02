@@ -1,15 +1,22 @@
 
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useIsAuthenticated } from '@azure/msal-react';
 import Layout from '@/components/Layout';
 
 const Index = () => {
   const navigate = useNavigate();
+  const isAuthenticated = useIsAuthenticated();
 
   useEffect(() => {
-    // For now, just redirect to login page
-    navigate('/login');
-  }, [navigate]);
+    if (isAuthenticated) {
+      // If user is authenticated, redirect to home page
+      navigate('/home');
+    } else {
+      // If user is not authenticated, redirect to login page
+      navigate('/login');
+    }
+  }, [navigate, isAuthenticated]);
 
   return (
     <Layout>

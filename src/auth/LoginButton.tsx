@@ -1,15 +1,22 @@
 
 import { useMsal } from "@azure/msal-react";
+import { useNavigate } from "react-router-dom";
 import { loginRequest } from "./authConfig";
 import { Button } from '@/components/ui/button';
 
 export const LoginButton = () => {
   const { instance } = useMsal();
+  const navigate = useNavigate();
 
   const handleLogin = () => {
-    instance.loginPopup(loginRequest).catch((e) => {
-      console.error(e);
-    });
+    instance.loginPopup(loginRequest)
+      .then(() => {
+        // Redirect to home page after successful login
+        navigate('/home');
+      })
+      .catch((e) => {
+        console.error(e);
+      });
   };
 
   return (
