@@ -9,6 +9,7 @@ import { checkUserModelAvailable, generatePhoto } from '@/services/apiService';
 import { useToast } from '@/hooks/use-toast';
 import { useMsal, useIsAuthenticated } from '@azure/msal-react';
 import { AuthGuard } from '@/auth/AuthGuard';
+import { useUserData } from '@/hooks/useUserData';
 
 interface ModelInfo {
   id: string;
@@ -27,6 +28,7 @@ const HomePage = () => {
   const { toast } = useToast();
   const { instance } = useMsal();
   const isAuthenticated = useIsAuthenticated();
+  const { user } = useUserData();
   
   const [userHasModel, setUserHasModel] = useState<boolean>(false);
   const [modelInfo, setModelInfo] = useState<ModelInfo | null>(null);
@@ -36,22 +38,24 @@ const HomePage = () => {
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && user?.id) {
       checkUserModel();
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, user?.id]);
 
   const checkUserModel = async () => {
+    if (!user?.id) return;
+    
     setIsLoadingModel(true);
     try {
-      const response = await checkUserModelAvailable();
+      const response = await checkUserModelAvailable(user.id);
       
       if (response.success) {
         setUserHasModel(response.hasModel);
         if (response.hasModel && response.modelName) {
           setModelInfo({
             id: response.modelName,
-            ownerName: 'IPS User',
+            ownerName: user.displayName || user.name || 'IPS User',
             isOwnedByUser: true
           });
         }
@@ -152,7 +156,7 @@ const HomePage = () => {
               <div className="flex items-center gap-4">
                 <Badge variant="secondary" className="flex items-center gap-1">
                   <User className="h-3 w-3" />
-                  IPS User
+                  {user?.displayName || user?.name || 'IPS User'}
                 </Badge>
                 <Button variant="ghost" size="sm" onClick={handleLogout}>
                   <LogOut className="h-4 w-4 mr-2" />

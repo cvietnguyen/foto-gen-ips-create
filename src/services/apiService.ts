@@ -36,9 +36,9 @@ export interface TrainModelResponse {
 }
 
 // 1. API to check if user has model or not
-export const checkUserModelAvailable = async (): Promise<CheckUserModelResponse> => {
+export const checkUserModelAvailable = async (userId?: string): Promise<CheckUserModelResponse> => {
   try {
-    console.log('Checking user model availability...');
+    console.log('Checking user model availability for user:', userId);
     
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 1000));
