@@ -3,57 +3,38 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Settings } from 'lucide-react';
+import { useDemoContext } from '@/contexts/DemoContext';
 
-interface ModelInfo {
-  id: string;
-  ownerName: string;
-  isOwnedByUser: boolean;
-}
-
-interface DemoControlsProps {
-  isVisible: boolean;
-  onToggleVisibility: () => void;
-  onDemoSetUserModel?: () => void;
-  onDemoSetNoModel?: () => void;
-  onDemoSetOtherModel?: () => void;
-  onDemoLogin?: () => void;
-  onDemoLogout?: () => void;
-  isLoggedIn: boolean;
-  userHasModel?: boolean;
-  modelInfo?: ModelInfo;
-  onSwitchToUserModel?: () => void;
-}
-
-const DemoControls = ({ 
-  isVisible, 
-  onToggleVisibility, 
-  onDemoSetUserModel, 
-  onDemoSetNoModel, 
-  onDemoSetOtherModel,
-  onDemoLogin,
-  onDemoLogout,
-  isLoggedIn,
-  userHasModel,
-  modelInfo,
-  onSwitchToUserModel
-}: DemoControlsProps) => {
+const DemoControls = () => {
   const navigate = useNavigate();
+  const {
+    isLoggedIn,
+    userHasModel,
+    modelInfo,
+    showDemoControls,
+    setShowDemoControls,
+    handleDemoLogin,
+    handleDemoLogout,
+    handleDemoSetUserModel,
+    handleDemoSetNoModel,
+    handleDemoSetOtherModel,
+  } = useDemoContext();
 
   const handleLogin = () => {
-    onDemoLogin?.();
+    handleDemoLogin();
     navigate('/home');
   };
 
   const handleLogout = () => {
-    onDemoLogout?.();
+    handleDemoLogout();
     navigate('/login');
   };
 
-  if (!isVisible) {
+  if (!showDemoControls) {
     return (
       <div className="fixed top-4 right-4 z-50">
         <Button 
-          onClick={onToggleVisibility} 
+          onClick={() => setShowDemoControls(true)} 
           size="sm" 
           variant="outline"
           className="bg-yellow-50 border-yellow-200 text-yellow-800 hover:bg-yellow-100"
@@ -78,13 +59,13 @@ const DemoControls = ({
                 </Button>
               ) : (
                 <>
-                  <Button onClick={onDemoSetUserModel} size="sm" variant="outline" className="text-xs">
+                  <Button onClick={handleDemoSetUserModel} size="sm" variant="outline" className="text-xs">
                     User Has Model
                   </Button>
-                  <Button onClick={onDemoSetNoModel} size="sm" variant="outline" className="text-xs">
+                  <Button onClick={handleDemoSetNoModel} size="sm" variant="outline" className="text-xs">
                     User No Model
                   </Button>
-                  <Button onClick={onDemoSetOtherModel} size="sm" variant="outline" className="text-xs">
+                  <Button onClick={handleDemoSetOtherModel} size="sm" variant="outline" className="text-xs">
                     Using Other's Model
                   </Button>
                   <Button onClick={handleLogout} size="sm" variant="outline" className="text-xs">
@@ -95,7 +76,7 @@ const DemoControls = ({
             </div>
           </div>
           <Button 
-            onClick={onToggleVisibility} 
+            onClick={() => setShowDemoControls(false)} 
             size="sm" 
             variant="ghost"
             className="text-yellow-600 hover:bg-yellow-100"

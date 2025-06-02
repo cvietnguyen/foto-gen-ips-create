@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Sparkles, User, LogOut, Zap, Upload, Image as ImageIcon, Loader2, RefreshCw, Users, ArrowLeft } from 'lucide-react';
+import { useDemoContext } from '@/contexts/DemoContext';
 
 interface ModelInfo {
   id: string;
@@ -19,8 +19,9 @@ interface HomePageProps {
   onSwitchToUserModel?: () => void;
 }
 
-const HomePage = ({ userHasModel = false, modelInfo, onSwitchToUserModel }: HomePageProps) => {
+const HomePage = () => {
   const navigate = useNavigate();
+  const { userHasModel, modelInfo, handleSwitchToUserModel, showDemoControls } = useDemoContext();
   const [prompt, setPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
@@ -47,7 +48,7 @@ const HomePage = ({ userHasModel = false, modelInfo, onSwitchToUserModel }: Home
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-10">
+      <header className={`bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky z-10 ${showDemoControls ? 'top-16' : 'top-0'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-3">
@@ -112,7 +113,7 @@ const HomePage = ({ userHasModel = false, modelInfo, onSwitchToUserModel }: Home
                 </Button>
               ) : (
                 <Button 
-                  onClick={onSwitchToUserModel}
+                  onClick={handleSwitchToUserModel}
                   variant="outline"
                   size="sm"
                   className="flex items-center gap-2 text-green-600 border-green-200 hover:bg-green-50"
