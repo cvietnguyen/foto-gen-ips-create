@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, User, LogOut, Zap, Upload, Image as ImageIcon, Loader2, RefreshCw, Users } from 'lucide-react';
+import { Sparkles, User, LogOut, Zap, Upload, Image as ImageIcon, Loader2, RefreshCw, Users, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface ModelInfo {
@@ -17,9 +17,10 @@ interface HomePageProps {
   onLogout: () => void;
   userHasModel: boolean;
   modelInfo?: ModelInfo;
+  onSwitchToUserModel?: () => void;
 }
 
-const HomePage = ({ onLogout, userHasModel, modelInfo }: HomePageProps) => {
+const HomePage = ({ onLogout, userHasModel, modelInfo, onSwitchToUserModel }: HomePageProps) => {
   const navigate = useNavigate();
   const [prompt, setPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -96,7 +97,7 @@ const HomePage = ({ onLogout, userHasModel, modelInfo }: HomePageProps) => {
                 <span className="text-xs text-gray-500">({modelInfo.id})</span>
               </Badge>
               
-              {modelInfo.isOwnedByUser && (
+              {modelInfo.isOwnedByUser ? (
                 <Button 
                   onClick={handleTrainModel}
                   variant="outline"
@@ -105,6 +106,16 @@ const HomePage = ({ onLogout, userHasModel, modelInfo }: HomePageProps) => {
                 >
                   <RefreshCw className="h-4 w-4" />
                   Retrain Model
+                </Button>
+              ) : (
+                <Button 
+                  onClick={onSwitchToUserModel}
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center gap-2 text-green-600 border-green-200 hover:bg-green-50"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  Use My Model
                 </Button>
               )}
             </div>

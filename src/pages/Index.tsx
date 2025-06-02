@@ -46,6 +46,15 @@ const Index = () => {
     }
   };
 
+  const handleSwitchToUserModel = () => {
+    // Simulate switching back to user's own model
+    setModelInfo({
+      id: 'a7b2c3d4-e5f6-7890-1234-567890abcdef',
+      ownerName: 'You',
+      isOwnedByUser: true
+    });
+  };
+
   const handleLogout = () => {
     setIsLoggedIn(false);
     setUserHasModel(false);
@@ -61,6 +70,7 @@ const Index = () => {
           onLogout={handleLogout} 
           userHasModel={userHasModel} 
           modelInfo={modelInfo}
+          onSwitchToUserModel={handleSwitchToUserModel}
         />
       )}
     </Layout>
