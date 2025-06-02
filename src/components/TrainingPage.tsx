@@ -1,10 +1,8 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Progress } from '@/components/ui/progress';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Sparkles, Upload, FileText, Clock, Mail, ArrowLeft, CheckCircle, Home } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -13,7 +11,6 @@ const TrainingPage = () => {
   const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isTraining, setIsTraining] = useState(false);
-  const [trainingProgress, setTrainingProgress] = useState(0);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,20 +35,7 @@ const TrainingPage = () => {
     if (!selectedFile) return;
 
     setIsTraining(true);
-    setTrainingProgress(0);
-
-    // Simulate training progress
-    const interval = setInterval(() => {
-      setTrainingProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setIsTraining(false);
-          setShowSuccessDialog(true);
-          return 100;
-        }
-        return prev + 2;
-      });
-    }, 200);
+    setShowSuccessDialog(true);
   };
 
   const handleDialogClose = () => {
@@ -169,22 +153,17 @@ const TrainingPage = () => {
                 
                 <div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                    Training in Progress
+                    Your Model is Training
                   </h3>
                   <p className="text-gray-600 mb-4">
-                    Your AI model is being trained. This process takes approximately 20 minutes.
+                    Your AI model training has started. This process takes approximately 20 minutes to complete.
                   </p>
-                  
-                  <div className="space-y-2">
-                    <Progress value={trainingProgress} className="w-full" />
-                    <p className="text-sm text-gray-500">{trainingProgress}% complete</p>
-                  </div>
                 </div>
 
-                <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-                  <div className="flex items-center gap-2 text-yellow-700 justify-center">
+                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                  <div className="flex items-center gap-2 text-blue-700 justify-center">
                     <Mail className="h-4 w-4" />
-                    <span className="text-sm">You'll receive an email notification when training is complete</span>
+                    <span className="text-sm">You will receive an email notification when training is complete</span>
                   </div>
                 </div>
               </div>
