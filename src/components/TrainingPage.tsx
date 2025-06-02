@@ -1,17 +1,16 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Sparkles, Upload, FileText, Clock, Mail, ArrowLeft, CheckCircle, Home } from 'lucide-react';
+import { Sparkles, Upload, FileText, Clock, Mail, ArrowLeft, Home } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const TrainingPage = () => {
   const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isTraining, setIsTraining] = useState(false);
-  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -35,12 +34,6 @@ const TrainingPage = () => {
     if (!selectedFile) return;
 
     setIsTraining(true);
-    setShowSuccessDialog(true);
-  };
-
-  const handleDialogClose = () => {
-    setShowSuccessDialog(false);
-    navigate('/');
   };
 
   return (
@@ -171,30 +164,6 @@ const TrainingPage = () => {
           </CardContent>
         </Card>
       </main>
-
-      {/* Success Dialog */}
-      <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <div className="flex items-center justify-center mb-4">
-              <div className="p-3 rounded-full bg-green-100">
-                <CheckCircle className="h-8 w-8 text-green-600" />
-              </div>
-            </div>
-            <DialogTitle className="text-center">Training Started Successfully!</DialogTitle>
-            <DialogDescription className="text-center space-y-2">
-              <p>Your AI model training has been initiated.</p>
-              <p className="font-medium">You will receive an email notification when the training is complete (approximately 20 minutes).</p>
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex justify-center pt-4">
-            <Button onClick={handleDialogClose} className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
-              <Mail className="h-4 w-4 mr-2" />
-              Got it
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
