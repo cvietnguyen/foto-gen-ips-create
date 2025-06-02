@@ -1,9 +1,10 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, User, LogOut, Zap, Upload, Image as ImageIcon, Loader2, RefreshCw, Users, ArrowLeft, Settings } from 'lucide-react';
+import { Sparkles, User, LogOut, Zap, Upload, Image as ImageIcon, Loader2, RefreshCw, Users, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface ModelInfo {
@@ -17,17 +18,13 @@ interface HomePageProps {
   userHasModel: boolean;
   modelInfo?: ModelInfo;
   onSwitchToUserModel?: () => void;
-  onDemoSetUserModel?: () => void;
-  onDemoSetNoModel?: () => void;
-  onDemoSetOtherModel?: () => void;
 }
 
-const HomePage = ({ onLogout, userHasModel, modelInfo, onSwitchToUserModel, onDemoSetUserModel, onDemoSetNoModel, onDemoSetOtherModel }: HomePageProps) => {
+const HomePage = ({ onLogout, userHasModel, modelInfo, onSwitchToUserModel }: HomePageProps) => {
   const navigate = useNavigate();
   const [prompt, setPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
-  const [showDemoControls, setShowDemoControls] = useState(true);
 
   const handleGenerate = async () => {
     if (!prompt.trim()) return;
@@ -72,39 +69,6 @@ const HomePage = ({ onLogout, userHasModel, modelInfo, onSwitchToUserModel, onDe
           </div>
         </div>
       </header>
-
-      {/* Demo Controls */}
-      {showDemoControls && (
-        <div className="bg-yellow-50 border-b border-yellow-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Settings className="h-4 w-4 text-yellow-600" />
-                <span className="text-sm font-medium text-yellow-800">Demo Controls:</span>
-                <div className="flex gap-2">
-                  <Button onClick={onDemoSetUserModel} size="sm" variant="outline" className="text-xs">
-                    User Has Model
-                  </Button>
-                  <Button onClick={onDemoSetNoModel} size="sm" variant="outline" className="text-xs">
-                    User No Model
-                  </Button>
-                  <Button onClick={onDemoSetOtherModel} size="sm" variant="outline" className="text-xs">
-                    Using Other's Model
-                  </Button>
-                </div>
-              </div>
-              <Button 
-                onClick={() => setShowDemoControls(false)} 
-                size="sm" 
-                variant="ghost"
-                className="text-yellow-600 hover:bg-yellow-100"
-              >
-                Hide
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {userHasModel && modelInfo ? (

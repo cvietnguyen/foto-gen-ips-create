@@ -1,8 +1,9 @@
 
 import React, { useState } from 'react';
 import Layout from '@/components/Layout';
-import LoginPage from '@/components/LoginPage';
-import HomePage from '@/components/HomePage';
+import LoginPage from './LoginPage';
+import HomePage from './HomePage';
+import DemoControls from '@/components/DemoControls';
 
 interface ModelInfo {
   id: string;
@@ -14,6 +15,7 @@ const Index = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userHasModel, setUserHasModel] = useState(false);
   const [modelInfo, setModelInfo] = useState<ModelInfo | undefined>(undefined);
+  const [showDemoControls, setShowDemoControls] = useState(true);
 
   const handleLogin = () => {
     setIsLoggedIn(true);
@@ -89,19 +91,29 @@ const Index = () => {
 
   return (
     <Layout>
-      {!isLoggedIn ? (
-        <LoginPage onLogin={handleLogin} />
-      ) : (
-        <HomePage 
-          onLogout={handleLogout} 
-          userHasModel={userHasModel} 
-          modelInfo={modelInfo}
-          onSwitchToUserModel={handleSwitchToUserModel}
-          onDemoSetUserModel={handleDemoSetUserModel}
-          onDemoSetNoModel={handleDemoSetNoModel}
-          onDemoSetOtherModel={handleDemoSetOtherModel}
-        />
-      )}
+      <DemoControls
+        isVisible={showDemoControls}
+        onToggleVisibility={() => setShowDemoControls(!showDemoControls)}
+        onDemoSetUserModel={handleDemoSetUserModel}
+        onDemoSetNoModel={handleDemoSetNoModel}
+        onDemoSetOtherModel={handleDemoSetOtherModel}
+        onDemoLogin={handleLogin}
+        onDemoLogout={handleLogout}
+        isLoggedIn={isLoggedIn}
+      />
+      
+      <div className={showDemoControls ? 'pt-16' : ''}>
+        {!isLoggedIn ? (
+          <LoginPage onLogin={handleLogin} />
+        ) : (
+          <HomePage 
+            onLogout={handleLogout} 
+            userHasModel={userHasModel} 
+            modelInfo={modelInfo}
+            onSwitchToUserModel={handleSwitchToUserModel}
+          />
+        )}
+      </div>
     </Layout>
   );
 };
