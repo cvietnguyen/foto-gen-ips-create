@@ -1,10 +1,9 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Sparkles, Upload, FileText, Clock, Mail, ArrowLeft, Home } from 'lucide-react';
+import { Sparkles, Upload, FileText, Clock, Mail, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const TrainingPage = () => {
@@ -47,22 +46,19 @@ const TrainingPage = () => {
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back
               </Button>
-              <div className="p-2 rounded-lg bg-gradient-to-r from-purple-600 to-blue-600">
+              <div 
+                className="p-2 rounded-lg bg-gradient-to-r from-purple-600 to-blue-600 cursor-pointer"
+                onClick={() => navigate('/')}
+              >
                 <Sparkles className="h-6 w-6 text-white" />
               </div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+              <h1 
+                className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent cursor-pointer"
+                onClick={() => navigate('/')}
+              >
                 FotoGen
               </h1>
             </div>
-            
-            <Button 
-              variant="outline" 
-              onClick={() => navigate('/')}
-              className="flex items-center gap-2"
-            >
-              <Home className="h-4 w-4" />
-              Back to Generator
-            </Button>
           </div>
         </div>
       </header>
