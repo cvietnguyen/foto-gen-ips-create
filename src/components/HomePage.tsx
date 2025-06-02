@@ -1,9 +1,10 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, User, LogOut, Zap, Upload, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { Sparkles, User, LogOut, Zap, Upload, Image as ImageIcon, Loader2, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface HomePageProps {
@@ -72,6 +73,18 @@ const HomePage = ({ onLogout, userHasModel }: HomePageProps) => {
               <p className="text-gray-600">
                 Use your trained model to create amazing images from text prompts
               </p>
+            </div>
+
+            {/* Retrain Model Button */}
+            <div className="flex justify-center">
+              <Button 
+                onClick={handleTrainModel}
+                variant="outline"
+                className="flex items-center gap-2 text-purple-600 border-purple-200 hover:bg-purple-50"
+              >
+                <RefreshCw className="h-4 w-4" />
+                Retrain Model
+              </Button>
             </div>
 
             <div className="grid lg:grid-cols-2 gap-8">
