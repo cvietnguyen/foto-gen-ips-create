@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -5,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Sparkles, Upload, FileText, Clock, Mail, ArrowLeft, CheckCircle } from 'lucide-react';
+import { Sparkles, Upload, FileText, Clock, Mail, ArrowLeft, CheckCircle, Home } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const TrainingPage = () => {
@@ -76,6 +77,15 @@ const TrainingPage = () => {
                 FotoGen
               </h1>
             </div>
+            
+            <Button 
+              variant="outline" 
+              onClick={() => navigate('/')}
+              className="flex items-center gap-2"
+            >
+              <Home className="h-4 w-4" />
+              Back to Generator
+            </Button>
           </div>
         </div>
       </header>
