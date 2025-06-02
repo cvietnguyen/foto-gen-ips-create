@@ -1,3 +1,4 @@
+
 const API_BASE_URL = 'http://localhost:5208/api/integration';
 
 export interface GeneratePhotoRequest {
@@ -37,21 +38,18 @@ export interface TrainModelResponse {
 // 1. API to check if user has model or not
 export const checkUserModelAvailable = async (): Promise<CheckUserModelResponse> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/check-user-model-available`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        // Add authorization header if needed
-        // 'Authorization': `Bearer ${token}`
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data;
+    console.log('Checking user model availability...');
+    
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Return dummy data - user has a model
+    return {
+      hasModel: true,
+      modelName: 'user-model-v1.2',
+      success: true,
+      message: 'User model found successfully'
+    };
   } catch (error) {
     console.error('Error checking user model:', error);
     return {
@@ -65,22 +63,27 @@ export const checkUserModelAvailable = async (): Promise<CheckUserModelResponse>
 // 2. Generate photo from model
 export const generatePhoto = async (request: GeneratePhotoRequest): Promise<GeneratePhotoResponse> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/generate-photo`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        // Add authorization header if needed
-        // 'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(request),
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data;
+    console.log('Generating photo with request:', request);
+    
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 3000));
+    
+    // Return dummy generated image URL
+    const dummyImageUrls = [
+      'https://picsum.photos/512/512?random=1',
+      'https://picsum.photos/512/512?random=2',
+      'https://picsum.photos/512/512?random=3',
+      'https://picsum.photos/512/512?random=4',
+      'https://picsum.photos/512/512?random=5'
+    ];
+    
+    const randomImageUrl = dummyImageUrls[Math.floor(Math.random() * dummyImageUrls.length)];
+    
+    return {
+      imageUrl: randomImageUrl,
+      success: true,
+      message: 'Image generated successfully'
+    };
   } catch (error) {
     console.error('Error generating photo:', error);
     return {
@@ -94,20 +97,16 @@ export const generatePhoto = async (request: GeneratePhotoRequest): Promise<Gene
 // 3. Azure AD login (placeholder - actual implementation would use MSAL or similar)
 export const loginWithAzureAD = async (): Promise<{ success: boolean; token?: string; message?: string }> => {
   try {
-    // This is a placeholder for Azure AD authentication
-    // In a real implementation, you would use Microsoft Authentication Library (MSAL)
     console.log('Initiating Azure AD login...');
     
     // Simulate Azure AD login process
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          success: true,
-          token: 'dummy-azure-ad-token',
-          message: 'Successfully logged in with Azure AD'
-        });
-      }, 1000);
-    });
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    return {
+      success: true,
+      token: 'dummy-azure-ad-token-' + Date.now(),
+      message: 'Successfully logged in with Azure AD'
+    };
   } catch (error) {
     console.error('Error with Azure AD login:', error);
     return {
@@ -120,26 +119,19 @@ export const loginWithAzureAD = async (): Promise<{ success: boolean; token?: st
 // 4. Upload zip file
 export const uploadZipFile = async (zipFile: File, modelId: string): Promise<UploadZipResponse> => {
   try {
-    const formData = new FormData();
-    formData.append('file', zipFile);
-    formData.append('modelId', modelId);
-
-    const response = await fetch(`${API_BASE_URL}/uploading-zip-file`, {
-      method: 'POST',
-      headers: {
-        // Don't set Content-Type for FormData, let browser set it
-        // Add authorization header if needed
-        // 'Authorization': `Bearer ${getAuthToken()}`
-      },
-      body: formData,
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data;
+    console.log('Uploading zip file:', zipFile.name, 'for model:', modelId);
+    
+    // Simulate upload delay
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // Return dummy upload success with URL
+    const dummyUrl = `https://storage.example.com/uploads/${modelId}/${zipFile.name}`;
+    
+    return {
+      url: dummyUrl,
+      success: true,
+      message: 'Zip file uploaded successfully'
+    };
   } catch (error) {
     console.error('Error uploading zip file:', error);
     return {
@@ -153,22 +145,19 @@ export const uploadZipFile = async (zipFile: File, modelId: string): Promise<Upl
 // 5. Train model
 export const trainModel = async (request: TrainModelRequest): Promise<TrainModelResponse> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/train-model`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        // Add authorization header if needed
-        // 'Authorization': `Bearer ${getAuthToken()}`
-      },
-      body: JSON.stringify(request),
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data;
+    console.log('Starting model training with request:', request);
+    
+    // Simulate training start delay
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // Return dummy training success
+    const dummyModelId = 'trained-model-' + Date.now();
+    
+    return {
+      success: true,
+      message: 'Model training started successfully',
+      modelId: dummyModelId
+    };
   } catch (error) {
     console.error('Error training model:', error);
     return {
@@ -180,8 +169,8 @@ export const trainModel = async (request: TrainModelRequest): Promise<TrainModel
 
 // Helper function to set authorization token for future requests
 export const setAuthToken = (token: string) => {
-  // Store token in localStorage or sessionStorage
   localStorage.setItem('authToken', token);
+  console.log('Auth token set:', token);
 };
 
 // Helper function to get authorization token
