@@ -3,7 +3,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Building2, Sparkles } from 'lucide-react';
+import { Building2 } from 'lucide-react';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -14,15 +14,17 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 p-4">
       <Card className="w-full max-w-md shadow-xl border-0 bg-white/80 backdrop-blur-sm">
         <CardHeader className="text-center pb-8 pt-12">
           <div className="flex items-center justify-center mb-6">
-            <div className="p-3 rounded-full bg-gradient-to-r from-purple-600 to-blue-600">
-              <Sparkles className="h-8 w-8 text-white" />
-            </div>
+            <img 
+              src="https://www.ips-ag.com/wp-content/themes/ips-group-v1/images/ips-logo-no-claim.svg" 
+              alt="IPS Logo" 
+              className="h-12"
+            />
           </div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-2">
+          <h1 className="text-4xl font-bold mb-2" style={{ color: '#17428c' }}>
             FotoGen
           </h1>
           <div className="flex items-center justify-center gap-2 text-gray-600 mb-6">
@@ -37,7 +39,8 @@ const LoginPage = () => {
         <CardContent className="pb-12">
           <Button 
             onClick={handleLogin}
-            className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-6 text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
+            className="w-full text-white font-semibold py-6 text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
+            style={{ background: `linear-gradient(to right, #17428c, #125597)` }}
           >
             Sign in with Azure AD
           </Button>

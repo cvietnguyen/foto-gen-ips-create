@@ -53,10 +53,12 @@ const HomePage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-gradient-to-r from-purple-600 to-blue-600">
-                <Sparkles className="h-6 w-6 text-white" />
-              </div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+              <img 
+                src="https://www.ips-ag.com/wp-content/themes/ips-group-v1/images/ips-logo-no-claim.svg" 
+                alt="IPS Logo" 
+                className="h-8"
+              />
+              <h1 className="text-2xl font-bold" style={{ color: '#17428c' }}>
                 FotoGen
               </h1>
             </div>
@@ -92,9 +94,9 @@ const HomePage = () => {
             <div className="flex justify-center items-center gap-4">
               <Badge variant="outline" className="flex items-center gap-2 px-3 py-1">
                 {modelInfo.isOwnedByUser ? (
-                  <User className="h-4 w-4 text-green-600" />
+                  <User className="h-4 w-4" style={{ color: '#125597' }} />
                 ) : (
-                  <Users className="h-4 w-4 text-blue-600" />
+                  <Users className="h-4 w-4" style={{ color: '#17428c' }} />
                 )}
                 <span className="text-sm">
                   Model by: <strong>{modelInfo.ownerName}</strong>
@@ -107,7 +109,8 @@ const HomePage = () => {
                   onClick={handleTrainModel}
                   variant="outline"
                   size="sm"
-                  className="flex items-center gap-2 text-purple-600 border-purple-200 hover:bg-purple-50"
+                  className="flex items-center gap-2 border-2"
+                  style={{ color: '#17428c', borderColor: '#17428c' }}
                 >
                   <RefreshCw className="h-4 w-4" />
                   Retrain Model
@@ -117,7 +120,8 @@ const HomePage = () => {
                   onClick={handleSwitchToUserModel}
                   variant="outline"
                   size="sm"
-                  className="flex items-center gap-2 text-green-600 border-green-200 hover:bg-green-50"
+                  className="flex items-center gap-2 border-2"
+                  style={{ color: '#125597', borderColor: '#125597' }}
                 >
                   <ArrowLeft className="h-4 w-4" />
                   Use My Model
@@ -130,7 +134,7 @@ const HomePage = () => {
               <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Zap className="h-5 w-5 text-purple-600" />
+                    <Zap className="h-5 w-5" style={{ color: '#17428c' }} />
                     Prompt Generator
                   </CardTitle>
                 </CardHeader>
@@ -150,7 +154,8 @@ const HomePage = () => {
                   <Button 
                     onClick={handleGenerate}
                     disabled={!prompt.trim() || isGenerating}
-                    className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3"
+                    className="w-full text-white font-semibold py-3"
+                    style={{ background: `linear-gradient(to right, #17428c, #125597)` }}
                   >
                     {isGenerating ? (
                       <>
@@ -171,7 +176,7 @@ const HomePage = () => {
               <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <ImageIcon className="h-5 w-5 text-blue-600" />
+                    <ImageIcon className="h-5 w-5" style={{ color: '#125597' }} />
                     Generated Image
                   </CardTitle>
                 </CardHeader>
@@ -179,7 +184,7 @@ const HomePage = () => {
                   <div className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
                     {isGenerating ? (
                       <div className="text-center">
-                        <Loader2 className="h-8 w-8 animate-spin text-purple-600 mx-auto mb-2" />
+                        <Loader2 className="h-8 w-8 animate-spin mx-auto mb-2" style={{ color: '#17428c' }} />
                         <p className="text-sm text-gray-500">Creating your image...</p>
                       </div>
                     ) : generatedImage ? (
@@ -214,8 +219,8 @@ const HomePage = () => {
             <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
               <CardContent className="p-12">
                 <div className="space-y-6">
-                  <div className="p-8 rounded-full bg-gradient-to-r from-purple-100 to-blue-100 w-32 h-32 mx-auto flex items-center justify-center">
-                    <Upload className="h-12 w-12 text-purple-600" />
+                  <div className="p-8 rounded-full w-32 h-32 mx-auto flex items-center justify-center" style={{ background: `linear-gradient(to right, rgba(23, 66, 140, 0.1), rgba(18, 85, 151, 0.1))` }}>
+                    <Upload className="h-12 w-12" style={{ color: '#17428c' }} />
                   </div>
                   
                   <div>
@@ -230,7 +235,8 @@ const HomePage = () => {
                   <Button 
                     onClick={handleTrainModel}
                     size="lg"
-                    className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold px-8 py-4 text-lg"
+                    className="text-white font-semibold px-8 py-4 text-lg"
+                    style={{ background: `linear-gradient(to right, #17428c, #125597)` }}
                   >
                     <Upload className="h-5 w-5 mr-2" />
                     Start Training Your Model
