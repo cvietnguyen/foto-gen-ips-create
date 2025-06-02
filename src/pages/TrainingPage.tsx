@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,25 +19,6 @@ const TrainingPage = () => {
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string>('');
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
-
-  // Mock training images data
-  const trainingImages = [
-    { id: 1, src: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face', alt: 'Training image 1' },
-    { id: 2, src: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=200&h=200&fit=crop&crop=face', alt: 'Training image 2' },
-    { id: 3, src: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face', alt: 'Training image 3' },
-    { id: 4, src: 'https://images.unsplash.com/photo-1500648741775-53994a69daeb?w=200&h=200&fit=crop&crop=face', alt: 'Training image 4' },
-    { id: 5, src: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop&crop=face', alt: 'Training image 5' },
-    { id: 6, src: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop&crop=face', alt: 'Training image 6' },
-    { id: 7, src: 'https://images.unsplash.com/photo-1519345182560-472988babdf9?w=200&h=200&fit=crop&crop=face', alt: 'Training image 7' },
-    { id: 8, src: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop&crop=face', alt: 'Training image 8' },
-    { id: 9, src: 'https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=200&h=200&fit=crop&crop=face', alt: 'Training image 9' },
-    { id: 10, src: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=face', alt: 'Training image 10' },
-    { id: 11, src: 'https://images.unsplash.com/photo-1552058544-f2b08422138a?w=200&h=200&fit=crop&crop=face', alt: 'Training image 11' },
-    { id: 12, src: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200&h=200&fit=crop&crop=face', alt: 'Training image 12' },
-    { id: 13, src: 'https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?w=200&h=200&fit=crop&crop=face', alt: 'Training image 13' },
-    { id: 14, src: 'https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=200&h=200&fit=crop&crop=face', alt: 'Training image 14' },
-    { id: 15, src: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=200&h=200&fit=crop&crop=face', alt: 'Training image 15' },
-  ];
 
   const generateModelId = () => {
     return 'model-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
@@ -179,7 +161,7 @@ const TrainingPage = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Image className="h-5 w-5" style={{ color: '#17428c' }} />
-              Training Images ({trainingImages.length} images)
+              Training Images
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -235,19 +217,6 @@ const TrainingPage = () => {
                     </p>
                   </div>
                 )}
-
-                {/* Images Grid */}
-                <div className="grid grid-cols-5 gap-4">
-                  {trainingImages.map((image) => (
-                    <div key={image.id} className="aspect-square">
-                      <img
-                        src={image.src}
-                        alt={image.alt}
-                        className="w-full h-full object-cover rounded-lg border-2 border-gray-200 hover:border-blue-300 transition-colors"
-                      />
-                    </div>
-                  ))}
-                </div>
 
                 <div className="p-4 rounded-lg border border-blue-200" style={{ backgroundColor: 'rgba(23, 66, 140, 0.05)' }}>
                   <h4 className="font-medium mb-2" style={{ color: '#17428c' }}>Training Requirements:</h4>
