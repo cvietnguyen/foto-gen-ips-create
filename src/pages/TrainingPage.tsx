@@ -3,38 +3,34 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Sparkles, Upload, FileText, Clock, Mail, ArrowLeft } from 'lucide-react';
+import { Sparkles, Clock, Mail, ArrowLeft, Image } from 'lucide-react';
 import { useDemoContext } from '@/contexts/DemoContext';
 
 const TrainingPage = () => {
   const navigate = useNavigate();
   const { showDemoControls } = useDemoContext();
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isTraining, setIsTraining] = useState(false);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      // Check if it's a ZIP file by extension or MIME type
-      const isZipFile = file.name.toLowerCase().endsWith('.zip') || 
-                       file.type === 'application/zip' || 
-                       file.type === 'application/x-zip-compressed';
-      
-      if (isZipFile) {
-        setSelectedFile(file);
-        console.log('File selected:', file.name, 'Type:', file.type);
-      } else {
-        console.log('Invalid file type. Only ZIP files are allowed.');
-        event.target.value = ''; // Clear the input
-      }
-    }
-  };
+  // Mock training images data
+  const trainingImages = [
+    { id: 1, src: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face', alt: 'Training image 1' },
+    { id: 2, src: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=200&h=200&fit=crop&crop=face', alt: 'Training image 2' },
+    { id: 3, src: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face', alt: 'Training image 3' },
+    { id: 4, src: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=face', alt: 'Training image 4' },
+    { id: 5, src: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop&crop=face', alt: 'Training image 5' },
+    { id: 6, src: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop&crop=face', alt: 'Training image 6' },
+    { id: 7, src: 'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=200&h=200&fit=crop&crop=face', alt: 'Training image 7' },
+    { id: 8, src: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop&crop=face', alt: 'Training image 8' },
+    { id: 9, src: 'https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=200&h=200&fit=crop&crop=face', alt: 'Training image 9' },
+    { id: 10, src: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=face', alt: 'Training image 10' },
+    { id: 11, src: 'https://images.unsplash.com/photo-1552058544-f2b08422138a?w=200&h=200&fit=crop&crop=face', alt: 'Training image 11' },
+    { id: 12, src: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200&h=200&fit=crop&crop=face', alt: 'Training image 12' },
+    { id: 13, src: 'https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?w=200&h=200&fit=crop&crop=face', alt: 'Training image 13' },
+    { id: 14, src: 'https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=200&h=200&fit=crop&crop=face', alt: 'Training image 14' },
+    { id: 15, src: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=200&h=200&fit=crop&crop=face', alt: 'Training image 15' },
+  ];
 
   const handleStartTraining = async () => {
-    if (!selectedFile) return;
-
     setIsTraining(true);
   };
 
@@ -80,68 +76,44 @@ const TrainingPage = () => {
         <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Upload className="h-5 w-5" style={{ color: '#17428c' }} />
-              Upload Training Data
+              <Image className="h-5 w-5" style={{ color: '#17428c' }} />
+              Training Images ({trainingImages.length} images)
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             {!isTraining ? (
               <>
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="zip-file" className="text-sm font-medium text-gray-700">
-                      Select ZIP file containing your training images
-                    </Label>
-                    <div className="mt-2">
-                      <Input
-                        id="zip-file"
-                        type="file"
-                        accept=".zip,application/zip,application/x-zip-compressed"
-                        onChange={handleFileChange}
-                        className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:text-white"
-                        style={{ 
-                          '--file-bg': 'linear-gradient(to right, #17428c, #125597)',
-                          background: 'var(--file-bg)'
-                        } as React.CSSProperties & { '--file-bg': string }}
+                {/* Images Grid */}
+                <div className="grid grid-cols-5 gap-4">
+                  {trainingImages.map((image) => (
+                    <div key={image.id} className="aspect-square">
+                      <img
+                        src={image.src}
+                        alt={image.alt}
+                        className="w-full h-full object-cover rounded-lg border-2 border-gray-200 hover:border-blue-300 transition-colors"
                       />
                     </div>
-                    {selectedFile && (
-                      <p className="text-sm text-green-600 mt-1">
-                        File ready: {selectedFile.name}
-                      </p>
-                    )}
-                  </div>
-
-                  {selectedFile && (
-                    <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-                      <div className="flex items-center gap-2 text-green-700">
-                        <FileText className="h-4 w-4" />
-                        <span className="font-medium">{selectedFile.name}</span>
-                        <span className="text-sm">({(selectedFile.size / 1024 / 1024).toFixed(2)} MB)</span>
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="p-4 rounded-lg border border-blue-200" style={{ backgroundColor: 'rgba(23, 66, 140, 0.05)' }}>
-                    <h4 className="font-medium mb-2" style={{ color: '#17428c' }}>Training Requirements:</h4>
-                    <ul className="text-sm space-y-1" style={{ color: '#125597' }}>
-                      <li>• Upload 10-20 high-quality images in ZIP format</li>
-                      <li>• Images should be at least 512x512 pixels</li>
-                      <li>• Supported formats: JPG, PNG</li>
-                      <li>• Training takes approximately 20 minutes</li>
-                    </ul>
-                  </div>
-
-                  <Button
-                    onClick={handleStartTraining}
-                    disabled={!selectedFile}
-                    className="w-full text-white font-semibold py-3"
-                    style={{ background: `linear-gradient(to right, #17428c, #125597)` }}
-                  >
-                    <Upload className="h-4 w-4 mr-2" />
-                    Start Training Model
-                  </Button>
+                  ))}
                 </div>
+
+                <div className="p-4 rounded-lg border border-blue-200" style={{ backgroundColor: 'rgba(23, 66, 140, 0.05)' }}>
+                  <h4 className="font-medium mb-2" style={{ color: '#17428c' }}>Training Requirements:</h4>
+                  <ul className="text-sm space-y-1" style={{ color: '#125597' }}>
+                    <li>• Upload 10-20 high-quality images in ZIP format</li>
+                    <li>• Images should be at least 512x512 pixels</li>
+                    <li>• Supported formats: JPG, PNG</li>
+                    <li>• Training takes approximately 20 minutes</li>
+                  </ul>
+                </div>
+
+                <Button
+                  onClick={handleStartTraining}
+                  className="w-full text-white font-semibold py-3"
+                  style={{ background: `linear-gradient(to right, #17428c, #125597)` }}
+                >
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  Start Training Model
+                </Button>
               </>
             ) : (
               <div className="text-center space-y-6">
