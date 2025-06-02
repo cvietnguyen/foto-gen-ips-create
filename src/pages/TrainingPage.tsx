@@ -1,9 +1,9 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Sparkles, Clock, Mail, ArrowLeft, Image } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Sparkles, Clock, Mail, ArrowLeft, Image, Upload } from 'lucide-react';
 import { useDemoContext } from '@/contexts/DemoContext';
 
 const TrainingPage = () => {
@@ -32,6 +32,14 @@ const TrainingPage = () => {
 
   const handleStartTraining = async () => {
     setIsTraining(true);
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files) {
+      console.log('Files uploaded:', files);
+      // Handle file upload logic here
+    }
   };
 
   return (
@@ -83,6 +91,26 @@ const TrainingPage = () => {
           <CardContent className="space-y-6">
             {!isTraining ? (
               <>
+                {/* Upload Button */}
+                <div className="flex justify-center mb-6">
+                  <div className="relative">
+                    <Input
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      onChange={handleFileUpload}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    />
+                    <Button
+                      className="text-white font-semibold px-6 py-3"
+                      style={{ background: `linear-gradient(to right, #17428c, #125597)` }}
+                    >
+                      <Upload className="h-4 w-4 mr-2" />
+                      Upload Images
+                    </Button>
+                  </div>
+                </div>
+
                 {/* Images Grid */}
                 <div className="grid grid-cols-5 gap-4">
                   {trainingImages.map((image) => (
