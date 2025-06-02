@@ -1,10 +1,10 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Sparkles, User, LogOut, Zap, Upload, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface HomePageProps {
   onLogout: () => void;
@@ -12,6 +12,7 @@ interface HomePageProps {
 }
 
 const HomePage = ({ onLogout, userHasModel }: HomePageProps) => {
+  const navigate = useNavigate();
   const [prompt, setPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
@@ -28,8 +29,7 @@ const HomePage = ({ onLogout, userHasModel }: HomePageProps) => {
   };
 
   const handleTrainModel = () => {
-    // Navigate to training page (placeholder)
-    console.log('Navigate to model training');
+    navigate('/training');
   };
 
   return (
