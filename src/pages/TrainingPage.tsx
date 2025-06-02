@@ -17,7 +17,6 @@ const TrainingPage = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string>('');
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
-  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
 
   // Mock training images data
   const trainingImages = [
@@ -62,10 +61,6 @@ const TrainingPage = () => {
 
     const fileArray = Array.from(files);
     setUploadedFiles(fileArray);
-    
-    // Create preview URLs for the uploaded images
-    const urls = fileArray.map(file => URL.createObjectURL(file));
-    setPreviewUrls(urls);
     
     setIsUploading(true);
 
@@ -206,26 +201,6 @@ const TrainingPage = () => {
                     </Button>
                   </div>
                 </div>
-
-                {/* Uploaded Images Preview */}
-                {previewUrls.length > 0 && (
-                  <div className="mb-6">
-                    <h4 className="font-medium mb-3 text-gray-700">
-                      Uploaded Images ({previewUrls.length} images)
-                    </h4>
-                    <div className="grid grid-cols-5 gap-4">
-                      {previewUrls.map((url, index) => (
-                        <div key={index} className="aspect-square">
-                          <img
-                            src={url}
-                            alt={`Uploaded image ${index + 1}`}
-                            className="w-full h-full object-cover rounded-lg border-2 border-green-300"
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
 
                 {/* Upload Status */}
                 {uploadedFiles.length > 0 && (
