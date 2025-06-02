@@ -2,19 +2,14 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
-import { useDemoContext } from '@/contexts/DemoContext';
 
 const Index = () => {
   const navigate = useNavigate();
-  const { isLoggedIn } = useDemoContext();
 
   useEffect(() => {
-    if (!isLoggedIn) {
-      navigate('/login');
-    } else {
-      navigate('/home');
-    }
-  }, [isLoggedIn, navigate]);
+    // For now, just redirect to login page
+    navigate('/login');
+  }, [navigate]);
 
   return (
     <Layout>

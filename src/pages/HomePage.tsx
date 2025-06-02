@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Sparkles, User, LogOut, Zap, Upload, Image as ImageIcon, Loader2, RefreshCw, Users, ArrowLeft } from 'lucide-react';
-import { useDemoContext } from '@/contexts/DemoContext';
 
 interface ModelInfo {
   id: string;
@@ -22,7 +20,14 @@ interface HomePageProps {
 
 const HomePage = () => {
   const navigate = useNavigate();
-  const { userHasModel, modelInfo, handleSwitchToUserModel, showDemoControls } = useDemoContext();
+  // Remove demo context and hardcode some values for now
+  const userHasModel = true;
+  const modelInfo = {
+    id: 'model-123',
+    ownerName: 'IPS User',
+    isOwnedByUser: true
+  };
+  
   const [prompt, setPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
@@ -46,10 +51,15 @@ const HomePage = () => {
     navigate('/login');
   };
 
+  const handleSwitchToUserModel = () => {
+    // Placeholder function
+    console.log('Switch to user model');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       {/* Header */}
-      <header className={`bg-white backdrop-blur-sm border-b border-gray-200 sticky z-10 ${showDemoControls ? 'top-16' : 'top-0'}`}>
+      <header className="bg-white backdrop-blur-sm border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-3">
