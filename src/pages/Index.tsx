@@ -46,6 +46,32 @@ const Index = () => {
     }
   };
 
+  // Demo control functions
+  const handleDemoSetUserModel = () => {
+    setUserHasModel(true);
+    setModelInfo({
+      id: 'a7b2c3d4-e5f6-7890-1234-567890abcdef',
+      ownerName: 'You',
+      isOwnedByUser: true
+    });
+  };
+
+  const handleDemoSetNoModel = () => {
+    setUserHasModel(false);
+    setModelInfo(undefined);
+  };
+
+  const handleDemoSetOtherModel = () => {
+    setUserHasModel(true);
+    const otherUsers = ['Alice Johnson', 'Bob Smith', 'Carol Davis', 'David Wilson'];
+    const randomUser = otherUsers[Math.floor(Math.random() * otherUsers.length)];
+    setModelInfo({
+      id: '12345678-9abc-def0-1234-567890abcdef',
+      ownerName: randomUser,
+      isOwnedByUser: false
+    });
+  };
+
   const handleSwitchToUserModel = () => {
     // Simulate switching back to user's own model
     setModelInfo({
@@ -71,6 +97,9 @@ const Index = () => {
           userHasModel={userHasModel} 
           modelInfo={modelInfo}
           onSwitchToUserModel={handleSwitchToUserModel}
+          onDemoSetUserModel={handleDemoSetUserModel}
+          onDemoSetNoModel={handleDemoSetNoModel}
+          onDemoSetOtherModel={handleDemoSetOtherModel}
         />
       )}
     </Layout>
