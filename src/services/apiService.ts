@@ -40,16 +40,38 @@ export const checkUserModelAvailable = async (userId?: string): Promise<CheckUse
   try {
     console.log('Checking user model availability for user:', userId);
     
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    if (!userId) {
+      return {
+        hasModel: false,
+        success: false,
+        message: 'User ID is required'
+      };
+    }
     
-    // Return dummy data - user has a model
-    return {
-      hasModel: true,
-      modelName: 'user-model-v1.2',
-      success: true,
-      message: 'User model found successfully'
-    };
+    const response = await fetch(`${API_BASE_URL}/check-user-model-available?modelName=${userId}`);
+    
+    if (response.status === 200) {
+      const data = await response.json();
+      return {
+        hasModel: true,
+        modelName: userId,
+        success: true,
+        message: 'User model found successfully'
+      };
+    } else if (response.status === 404) {
+      const data = await response.json();
+      return {
+        hasModel: false,
+        success: false,
+        message: data.message || 'Model not found'
+      };
+    } else {
+      return {
+        hasModel: false,
+        success: false,
+        message: 'Failed to check user model availability'
+      };
+    }
   } catch (error) {
     console.error('Error checking user model:', error);
     return {
