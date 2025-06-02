@@ -48,7 +48,19 @@ export const checkUserModelAvailable = async (userId?: string): Promise<CheckUse
       };
     }
     
-    const response = await fetch(`${API_BASE_URL}/check-user-model-available?modelName=${userId}`);
+    const token = getAuthToken();
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+    };
+    
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    
+    const response = await fetch(`${API_BASE_URL}/check-user-model-available?modelName=${userId}`, {
+      method: 'GET',
+      headers: headers
+    });
     
     if (response.status === 200) {
       const data = await response.json();
