@@ -20,8 +20,8 @@ const App = () => (
       <DemoProvider>
         <Toaster />
         <Sonner />
-        <DemoControls />
         <BrowserRouter>
+          <DemoControls />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<LoginPage />} />
