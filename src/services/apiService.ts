@@ -98,25 +98,50 @@ export const generatePhoto = async (request: GeneratePhotoRequest): Promise<Gene
   try {
     console.log('Generating photo with request:', request);
     
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    
-    // Return dummy generated image URL
-    const dummyImageUrls = [
-      'https://picsum.photos/512/512?random=1',
-      'https://picsum.photos/512/512?random=2',
-      'https://picsum.photos/512/512?random=3',
-      'https://picsum.photos/512/512?random=4',
-      'https://picsum.photos/512/512?random=5'
-    ];
-    
-    const randomImageUrl = dummyImageUrls[Math.floor(Math.random() * dummyImageUrls.length)];
-    
-    return {
-      imageUrl: randomImageUrl,
-      success: true,
-      message: 'Image generated successfully'
+    const token = getAuthToken();
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
     };
+    
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    
+    // Set ModelName to null if using user's own model
+    const requestBody = {
+      ModelName: request.ModelName === 'user-model' ? null : request.ModelName,
+      Prompt: request.Prompt
+    };
+    
+    const response = await fetch(`${API_BASE_URL}/integration/generate-photo`, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify(requestBody)
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      
+      if (data.isSuccess) {
+        return {
+          imageUrl: data.data,
+          success: true,
+          message: data.message || 'Image generated successfully'
+        };
+      } else {
+        return {
+          imageUrl: '',
+          success: false,
+          message: data.message || 'Failed to generate photo'
+        };
+      }
+    } else {
+      return {
+        imageUrl: '',
+        success: false,
+        message: `Generation failed with status: ${response.status}`
+      };
+    }
   } catch (error) {
     console.error('Error generating photo:', error);
     return {
