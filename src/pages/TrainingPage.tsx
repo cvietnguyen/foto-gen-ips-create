@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,17 +6,27 @@ import { Input } from '@/components/ui/input';
 import { Sparkles, Clock, Mail, Image, Upload } from 'lucide-react';
 import { uploadZipFile, trainModel } from '@/services/apiService';
 import { useToast } from '@/hooks/use-toast';
+import { useIsAuthenticated } from '@azure/msal-react';
 import { AuthGuard } from '@/auth/AuthGuard';
 import JSZip from 'jszip';
 
 const TrainingPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const isAuthenticated = useIsAuthenticated();
   
   const [isTraining, setIsTraining] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+  }, [isAuthenticated, navigate]);
 
   const generateModelId = () => {
     return 'model-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
@@ -104,6 +114,10 @@ const TrainingPage = () => {
       setIsTraining(false);
     }
   };
+
+  if (!isAuthenticated) {
+    return null; // Will redirect to login
+  }
 
   return (
     <AuthGuard>

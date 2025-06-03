@@ -38,6 +38,14 @@ const HomePage = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
 
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+  }, [isAuthenticated, navigate]);
+
   useEffect(() => {
     if (isAuthenticated && user?.id) {
       if (username && modelName) {
@@ -138,6 +146,10 @@ const HomePage = () => {
     navigate('/home');
   };
 
+  if (!isAuthenticated) {
+    return null; // Will redirect to login
+  }
+
   if (isLoadingModel) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
@@ -182,14 +194,7 @@ const HomePage = () => {
         </header>
 
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
-          {isLoadingModel ? (
-            <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
-              <div className="text-center">
-                <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" style={{ color: '#17428c' }} />
-                <p className="text-gray-600">Checking your model...</p>
-              </div>
-            </div>
-          ) : userHasModel && modelInfo ? (
+          {userHasModel && modelInfo ? (
             <div className="space-y-8">
               <div className="text-center">
                 <h2 className="text-3xl font-bold text-gray-900 mb-2">
