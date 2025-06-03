@@ -59,7 +59,7 @@ export const checkUserModelAvailable = async (userId?: string, modelName?: strin
     
     // Use the provided modelName or null for user's own model
     const queryModelName = modelName !== undefined ? modelName : null;
-    const queryParam = queryModelName ? `modelName=${queryModelName}` : 'modelName=null';
+    const queryParam = queryModelName ? `modelName=${queryModelName}` : 'modelName=';
     
     const response = await fetch(`${API_BASE_URL}/integration/check-user-model-available?${queryParam}`, {
       method: 'GET',
