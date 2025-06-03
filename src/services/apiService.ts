@@ -155,17 +155,45 @@ export const uploadZipFile = async (zipFile: File, modelId: string): Promise<Upl
   try {
     console.log('Uploading zip file:', zipFile.name, 'for model:', modelId);
     
-    // Simulate upload delay
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    const token = getAuthToken();
+    const headers: HeadersInit = {};
     
-    // Return dummy upload success with URL
-    const dummyUrl = `https://storage.example.com/uploads/${modelId}/${zipFile.name}`;
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
     
-    return {
-      url: dummyUrl,
-      success: true,
-      message: 'Zip file uploaded successfully'
-    };
+    const formData = new FormData();
+    formData.append('file', zipFile);
+    
+    const response = await fetch('http://localhost:5208/api/files/upload', {
+      method: 'POST',
+      headers: headers,
+      body: formData
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      
+      if (data.isSuccess) {
+        return {
+          url: data.data,
+          success: true,
+          message: data.message || 'Zip file uploaded successfully'
+        };
+      } else {
+        return {
+          url: '',
+          success: false,
+          message: data.message || 'Upload failed'
+        };
+      }
+    } else {
+      return {
+        url: '',
+        success: false,
+        message: `Upload failed with status: ${response.status}`
+      };
+    }
   } catch (error) {
     console.error('Error uploading zip file:', error);
     return {
