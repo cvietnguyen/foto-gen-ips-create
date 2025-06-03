@@ -227,12 +227,21 @@ const TrainingPage = () => {
 
                   <Button
                     onClick={handleStartTraining}
-                    disabled={uploadedFiles.length === 0}
+                    disabled={uploadedFiles.length === 0 || isTraining}
                     className="w-full text-white font-semibold py-3"
                     style={{ background: `linear-gradient(to right, #17428c, #125597)` }}
                   >
-                    <Sparkles className="h-4 w-4 mr-2" />
-                    Start Training Model
+                    {isTraining ? (
+                      <>
+                        <Clock className="h-4 w-4 mr-2 animate-pulse" />
+                        Processing...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="h-4 w-4 mr-2" />
+                        Start Training Model
+                      </>
+                    )}
                   </Button>
                 </>
               ) : (
