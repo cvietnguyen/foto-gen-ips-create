@@ -1,5 +1,5 @@
 
-const API_BASE_URL = 'http://localhost:5208/api/integration';
+const API_BASE_URL = 'http://localhost:5208/api';
 
 export interface GeneratePhotoRequest {
   ModelName: string;
@@ -57,7 +57,7 @@ export const checkUserModelAvailable = async (userId?: string): Promise<CheckUse
       headers['Authorization'] = `Bearer ${token}`;
     }
     
-    const response = await fetch(`${API_BASE_URL}/check-user-model-available?modelName=${userId}`, {
+    const response = await fetch(`${API_BASE_URL}/integration/check-user-model-available?modelName=${userId}`, {
       method: 'GET',
       headers: headers
     });
@@ -164,13 +164,13 @@ export const uploadZipFile = async (zipFile: File, modelId: string): Promise<Upl
     
     const formData = new FormData();
     formData.append('file', zipFile);
-    
-    const response = await fetch('http://localhost:5208/api/files/upload', {
+    console.log("here");
+    const response = await fetch(`${API_BASE_URL}/files/upload`, {
       method: 'POST',
       headers: headers,
       body: formData
     });
-    
+    console.log(response);
     if (response.ok) {
       const data = await response.json();
       
