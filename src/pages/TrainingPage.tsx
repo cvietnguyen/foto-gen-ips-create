@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Sparkles, Clock, Mail, Image, Upload } from 'lucide-react';
+import { Sparkles, Clock, Mail, Image, Upload, Loader2 } from 'lucide-react';
 import { uploadZipFile, trainModel } from '@/services/apiService';
 import { useToast } from '@/hooks/use-toast';
 import { useIsAuthenticated } from '@azure/msal-react';
@@ -19,6 +19,7 @@ const TrainingPage = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  const [currentStep, setCurrentStep] = useState<'upload' | 'training' | 'complete'>('upload');
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -75,7 +76,8 @@ const TrainingPage = () => {
     setIsTraining(true);
 
     try {
-      // Step 1: Create and upload zip file
+      // Step 1: Upload files
+      setCurrentStep('upload');
       const modelId = generateModelId();
       console.log('Generated model ID:', modelId);
 
@@ -93,14 +95,21 @@ const TrainingPage = () => {
         description: `${uploadedFiles.length} images uploaded successfully.`,
       });
 
-      // Step 2: Start training with the uploaded file URL
+      // Step 2: Start training
+      setCurrentStep('training');
       const trainResponse = await trainModel({ imageUrl: uploadResponse.url });
       
       if (trainResponse.success) {
+        setCurrentStep('complete');
         toast({
           title: 'Training Started',
           description: 'Your model training has begun successfully.',
         });
+        
+        // Small delay to show success message before transitioning
+        setTimeout(() => {
+          // Don't reset isTraining here, let the training state persist
+        }, 1000);
       } else {
         throw new Error(trainResponse.message || 'Training failed to start');
       }
@@ -112,6 +121,7 @@ const TrainingPage = () => {
         variant: 'destructive',
       });
       setIsTraining(false);
+      setCurrentStep('upload');
     }
   };
 
@@ -231,40 +241,51 @@ const TrainingPage = () => {
                     className="w-full text-white font-semibold py-3"
                     style={{ background: `linear-gradient(to right, #17428c, #125597)` }}
                   >
-                    {isTraining ? (
-                      <>
-                        <Clock className="h-4 w-4 mr-2 animate-pulse" />
-                        Processing...
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="h-4 w-4 mr-2" />
-                        Start Training Model
-                      </>
-                    )}
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    Start Training Model
                   </Button>
                 </>
               ) : (
                 <div className="text-center space-y-6">
                   <div className="p-8 rounded-full w-32 h-32 mx-auto flex items-center justify-center" style={{ background: `linear-gradient(to right, rgba(23, 66, 140, 0.1), rgba(18, 85, 151, 0.1))` }}>
-                    <Clock className="h-12 w-12 animate-pulse" style={{ color: '#17428c' }} />
+                    {currentStep === 'upload' && (
+                      <div className="flex flex-col items-center">
+                        <Loader2 className="h-12 w-12 animate-spin" style={{ color: '#17428c' }} />
+                        <span className="text-xs mt-2" style={{ color: '#17428c' }}>Uploading...</span>
+                      </div>
+                    )}
+                    {currentStep === 'training' && (
+                      <div className="flex flex-col items-center">
+                        <Loader2 className="h-12 w-12 animate-spin" style={{ color: '#17428c' }} />
+                        <span className="text-xs mt-2" style={{ color: '#17428c' }}>Training...</span>
+                      </div>
+                    )}
+                    {currentStep === 'complete' && (
+                      <Clock className="h-12 w-12 animate-pulse" style={{ color: '#17428c' }} />
+                    )}
                   </div>
                   
                   <div>
                     <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                      Your Model is Training
+                      {currentStep === 'upload' && 'Uploading Your Images'}
+                      {currentStep === 'training' && 'Starting Model Training'}
+                      {currentStep === 'complete' && 'Your Model is Training'}
                     </h3>
                     <p className="text-gray-600 mb-4">
-                      Your AI model training has started. This process takes approximately 20 minutes to complete.
+                      {currentStep === 'upload' && 'Please wait while we upload your training images...'}
+                      {currentStep === 'training' && 'Initializing the training process...'}
+                      {currentStep === 'complete' && 'Your AI model training has started. This process takes approximately 20 minutes to complete.'}
                     </p>
                   </div>
 
-                  <div className="p-4 rounded-lg border border-blue-200" style={{ backgroundColor: 'rgba(23, 66, 140, 0.05)' }}>
-                    <div className="flex items-center gap-2 justify-center" style={{ color: '#125597' }}>
-                      <Mail className="h-4 w-4" />
-                      <span className="text-sm">You will receive an email notification when training is complete</span>
+                  {currentStep === 'complete' && (
+                    <div className="p-4 rounded-lg border border-blue-200" style={{ backgroundColor: 'rgba(23, 66, 140, 0.05)' }}>
+                      <div className="flex items-center gap-2 justify-center" style={{ color: '#125597' }}>
+                        <Mail className="h-4 w-4" />
+                        <span className="text-sm">You will receive an email notification when training is complete</span>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               )}
             </CardContent>
