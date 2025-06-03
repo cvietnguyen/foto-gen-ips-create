@@ -61,7 +61,8 @@ const HomePage = () => {
     
     setIsLoadingModel(true);
     try {
-      const response = await checkUserModelAvailable(user.id);
+      // Pass null as modelName when checking user's own model
+      const response = await checkUserModelAvailable(user.id, null);
       
       if (response.success) {
         setUserHasModel(response.hasModel);

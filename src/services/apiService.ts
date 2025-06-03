@@ -1,7 +1,8 @@
+
 const API_BASE_URL = 'http://localhost:5208/api';
 
 export interface GeneratePhotoRequest {
-  ModelName: string;
+  ModelName: string | null;
   Prompt: string;
 }
 
@@ -35,9 +36,9 @@ export interface TrainModelResponse {
 }
 
 // 1. API to check if user has model or not
-export const checkUserModelAvailable = async (userId?: string): Promise<CheckUserModelResponse> => {
+export const checkUserModelAvailable = async (userId?: string, modelName?: string | null): Promise<CheckUserModelResponse> => {
   try {
-    console.log('Checking user model availability for user:', userId);
+    console.log('Checking user model availability for user:', userId, 'model:', modelName);
     
     if (!userId) {
       return {
@@ -56,7 +57,11 @@ export const checkUserModelAvailable = async (userId?: string): Promise<CheckUse
       headers['Authorization'] = `Bearer ${token}`;
     }
     
-    const response = await fetch(`${API_BASE_URL}/integration/check-user-model-available?modelName=${userId}`, {
+    // Use the provided modelName or null for user's own model
+    const queryModelName = modelName !== undefined ? modelName : null;
+    const queryParam = queryModelName ? `modelName=${queryModelName}` : 'modelName=null';
+    
+    const response = await fetch(`${API_BASE_URL}/integration/check-user-model-available?${queryParam}`, {
       method: 'GET',
       headers: headers
     });
@@ -65,7 +70,7 @@ export const checkUserModelAvailable = async (userId?: string): Promise<CheckUse
       const data = await response.json();
       return {
         hasModel: true,
-        modelName: userId,
+        modelName: queryModelName || userId,
         success: true,
         message: 'User model found successfully'
       };
