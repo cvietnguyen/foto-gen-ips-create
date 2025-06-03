@@ -1,4 +1,3 @@
-
 const API_BASE_URL = 'http://localhost:5208/api';
 
 export interface GeneratePhotoRequest {
@@ -26,7 +25,7 @@ export interface UploadZipResponse {
 }
 
 export interface TrainModelRequest {
-  ImageUrl: string;
+  imageUrl: string;
 }
 
 export interface TrainModelResponse {
@@ -209,17 +208,42 @@ export const trainModel = async (request: TrainModelRequest): Promise<TrainModel
   try {
     console.log('Starting model training with request:', request);
     
-    // Simulate training start delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    // Return dummy training success
-    const dummyModelId = 'trained-model-' + Date.now();
-    
-    return {
-      success: true,
-      message: 'Model training started successfully',
-      modelId: dummyModelId
+    const token = getAuthToken();
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
     };
+    
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    
+    const response = await fetch(`${API_BASE_URL}/integration/train-model`, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify(request)
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      
+      if (data.isSuccess) {
+        return {
+          success: true,
+          message: data.message || 'Model training started successfully',
+          modelId: data.data
+        };
+      } else {
+        return {
+          success: false,
+          message: data.message || 'Training failed to start'
+        };
+      }
+    } else {
+      return {
+        success: false,
+        message: `Training failed with status: ${response.status}`
+      };
+    }
   } catch (error) {
     console.error('Error training model:', error);
     return {

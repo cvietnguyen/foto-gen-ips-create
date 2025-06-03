@@ -84,7 +84,7 @@ const TrainingPage = () => {
       });
 
       // Step 2: Start training with the uploaded file URL
-      const trainResponse = await trainModel({ ImageUrl: uploadResponse.url });
+      const trainResponse = await trainModel({ imageUrl: uploadResponse.url });
       
       if (trainResponse.success) {
         toast({
