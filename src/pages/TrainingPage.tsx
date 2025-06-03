@@ -15,7 +15,6 @@ const TrainingPage = () => {
   
   const [isTraining, setIsTraining] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [uploadedImageUrl, setUploadedImageUrl] = useState<string>('');
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
 
@@ -47,43 +46,17 @@ const TrainingPage = () => {
     const urls = fileArray.map(file => URL.createObjectURL(file));
     setPreviewUrls(urls);
     
-    setIsUploading(true);
-
-    try {
-      const modelId = generateModelId();
-      console.log('Generated model ID:', modelId);
-
-      const zipFile = await createZipFile(fileArray, modelId);
-      console.log('Created zip file:', zipFile);
-
-      const uploadResponse = await uploadZipFile(zipFile, modelId);
-      
-      if (uploadResponse.success) {
-        setUploadedImageUrl(uploadResponse.url);
-        toast({
-          title: 'Upload Successful',
-          description: `${fileArray.length} images uploaded and zipped successfully.`,
-        });
-      } else {
-        throw new Error(uploadResponse.message || 'Upload failed');
-      }
-    } catch (error) {
-      console.error('Upload error:', error);
-      toast({
-        title: 'Upload Failed',
-        description: 'Failed to upload and zip images. Please try again.',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsUploading(false);
-    }
+    toast({
+      title: 'Images Selected',
+      description: `${fileArray.length} images selected and ready for training.`,
+    });
   };
 
   const handleStartTraining = async () => {
-    if (!uploadedImageUrl) {
+    if (!uploadedFiles || uploadedFiles.length === 0) {
       toast({
-        title: 'No Images Uploaded',
-        description: 'Please upload images before starting training.',
+        title: 'No Images Selected',
+        description: 'Please select images before starting training.',
         variant: 'destructive',
       });
       return;
@@ -92,7 +65,26 @@ const TrainingPage = () => {
     setIsTraining(true);
 
     try {
-      const trainResponse = await trainModel({ ImageUrl: uploadedImageUrl });
+      // Step 1: Create and upload zip file
+      const modelId = generateModelId();
+      console.log('Generated model ID:', modelId);
+
+      const zipFile = await createZipFile(uploadedFiles, modelId);
+      console.log('Created zip file:', zipFile);
+
+      const uploadResponse = await uploadZipFile(zipFile, modelId);
+      
+      if (!uploadResponse.success) {
+        throw new Error(uploadResponse.message || 'Upload failed');
+      }
+
+      toast({
+        title: 'Upload Successful',
+        description: `${uploadedFiles.length} images uploaded successfully.`,
+      });
+
+      // Step 2: Start training with the uploaded file URL
+      const trainResponse = await trainModel({ ImageUrl: uploadResponse.url });
       
       if (trainResponse.success) {
         toast({
@@ -185,14 +177,14 @@ const TrainingPage = () => {
                   {previewUrls.length > 0 && (
                     <div className="mb-6">
                       <h4 className="font-medium mb-3 text-gray-700">
-                        Uploaded Images ({previewUrls.length} images)
+                        Selected Images ({previewUrls.length} images)
                       </h4>
                       <div className="grid grid-cols-5 gap-4">
                         {previewUrls.map((url, index) => (
                           <div key={index} className="aspect-square">
                             <img
                               src={url}
-                              alt={`Uploaded image ${index + 1}`}
+                              alt={`Selected image ${index + 1}`}
                               className="w-full h-full object-cover rounded-lg border-2 border-green-300"
                             />
                           </div>
@@ -205,7 +197,7 @@ const TrainingPage = () => {
                   {uploadedFiles.length > 0 && (
                     <div className="p-4 rounded-lg border border-green-200" style={{ backgroundColor: 'rgba(34, 197, 94, 0.05)' }}>
                       <p className="text-sm text-green-700">
-                        ✓ {uploadedFiles.length} images uploaded and ready for training
+                        ✓ {uploadedFiles.length} images selected and ready for training
                       </p>
                     </div>
                   )}
@@ -221,7 +213,7 @@ const TrainingPage = () => {
 
                   <Button
                     onClick={handleStartTraining}
-                    disabled={!uploadedImageUrl}
+                    disabled={uploadedFiles.length === 0}
                     className="w-full text-white font-semibold py-3"
                     style={{ background: `linear-gradient(to right, #17428c, #125597)` }}
                   >
