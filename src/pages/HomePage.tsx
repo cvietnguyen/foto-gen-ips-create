@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -25,6 +25,7 @@ interface HomePageProps {
 
 const HomePage = () => {
   const navigate = useNavigate();
+  const { username, modelName } = useParams();
   const { toast } = useToast();
   const { instance } = useMsal();
   const isAuthenticated = useIsAuthenticated();
@@ -39,9 +40,21 @@ const HomePage = () => {
 
   useEffect(() => {
     if (isAuthenticated && user?.id) {
-      checkUserModel();
+      if (username && modelName) {
+        // Using someone else's model from URL
+        setUserHasModel(true);
+        setModelInfo({
+          id: modelName,
+          ownerName: username,
+          isOwnedByUser: false
+        });
+        setIsLoadingModel(false);
+      } else {
+        // Check user's own model
+        checkUserModel();
+      }
     }
-  }, [isAuthenticated, user?.id]);
+  }, [isAuthenticated, user?.id, username, modelName]);
 
   const checkUserModel = async () => {
     if (!user?.id) return;
@@ -85,7 +98,7 @@ const HomePage = () => {
     setIsGenerating(true);
     try {
       const response = await generatePhoto({
-        ModelName: modelInfo.id,
+        ModelName: modelInfo.isOwnedByUser ? null : modelInfo.id,
         Prompt: prompt
       });
       
@@ -121,7 +134,7 @@ const HomePage = () => {
   };
 
   const handleSwitchToUserModel = () => {
-    console.log('Switch to user model');
+    navigate('/home');
   };
 
   if (isLoadingModel) {
