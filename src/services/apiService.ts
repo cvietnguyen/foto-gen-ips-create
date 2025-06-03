@@ -123,8 +123,13 @@ export const generatePhoto = async (request: GeneratePhotoRequest): Promise<Gene
       const data = await response.json();
       
       if (data.isSuccess) {
+        // Convert base64 to data URL for display
+        const base64Image = data.data.base64Image;
+        const outputFormat = data.data.outputFormat || 'jpg';
+        const imageUrl = `data:image/${outputFormat};base64,${base64Image}`;
+        
         return {
-          imageUrl: data.data,
+          imageUrl: imageUrl,
           success: true,
           message: data.message || 'Image generated successfully'
         };
