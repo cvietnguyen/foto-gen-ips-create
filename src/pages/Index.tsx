@@ -1,22 +1,35 @@
-
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useIsAuthenticated } from '@azure/msal-react';
 import Layout from '@/components/Layout';
 
 const Index = () => {
   const navigate = useNavigate();
   const isAuthenticated = useIsAuthenticated();
+  const location = useLocation();
+  const path = location.pathname;
 
   useEffect(() => {
+    // Check if URL path contains '/model/'
+    const isModelPath = path.includes('/model/');
+
     if (isAuthenticated) {
-      // If user is authenticated, redirect to home page
-      navigate('/home');
+      if (isModelPath) {
+        // Keep the original path to preserve model info
+        navigate(path);
+      } else {
+        // Regular flow - redirect to home page
+        navigate('/home');
+      }
     } else {
+      // Store the intended path if it's a model path
+      if (isModelPath) {
+        sessionStorage.setItem('redirectPath', path);
+      }
       // If user is not authenticated, redirect to login page
       navigate('/login');
     }
-  }, [navigate, isAuthenticated]);
+  }, [navigate, isAuthenticated, path]);
 
   return (
     <Layout>

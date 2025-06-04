@@ -1,10 +1,28 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Building2 } from 'lucide-react';
 import { LoginButton } from '@/auth/LoginButton';
+import { useIsAuthenticated, useMsal } from '@azure/msal-react';
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
+  const isAuthenticated = useIsAuthenticated();
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    if (isAuthenticated) {
+      // Check if there's a stored redirect path
+      const redirectPath = sessionStorage.getItem('redirectPath');
+      if (redirectPath) {
+        sessionStorage.removeItem('redirectPath'); // Clear stored path
+        navigate(redirectPath);
+      } else {
+        navigate('/home');
+      }
+    }
+  }, [isAuthenticated, navigate]);
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 p-4">
       <Card className="w-full max-w-md shadow-xl border-0 bg-white/80 backdrop-blur-sm">
