@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useIsAuthenticated } from '@azure/msal-react';
@@ -35,7 +36,9 @@ const Index = () => {
       // Store the intended path if it's a model path
       if (isModelPath) {
         console.log('Index.tsx - Storing model path in sessionStorage:', path);
+        console.log('Index.tsx - SessionStorage before storing:', sessionStorage.getItem('redirectPath'));
         sessionStorage.setItem('redirectPath', path);
+        console.log('Index.tsx - SessionStorage after storing:', sessionStorage.getItem('redirectPath'));
       }
       console.log('Index.tsx - Not authenticated, redirecting to /login');
       // If user is not authenticated, redirect to login page
