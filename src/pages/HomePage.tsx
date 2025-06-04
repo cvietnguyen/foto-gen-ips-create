@@ -49,20 +49,53 @@ const HomePage = () => {
   useEffect(() => {
     if (isAuthenticated && user?.id) {
       if (username && modelName) {
-        // Using someone else's model from URL
-        setUserHasModel(true);
-        setModelInfo({
-          id: modelName,
-          ownerName: username,
-          isOwnedByUser: false
-        });
-        setIsLoadingModel(false);
+        // Using someone else's model from URL - pass the modelName (model ID) to the API
+        checkOtherUserModel(modelName, username);
       } else {
         // Check user's own model
         checkUserModel();
       }
     }
   }, [isAuthenticated, user?.id, username, modelName]);
+
+  const checkOtherUserModel = async (modelId: string, ownerName: string) => {
+    if (!user?.id) return;
+    
+    setIsLoadingModel(true);
+    try {
+      // Pass the modelId to check if this specific model is available
+      const response = await checkUserModelAvailable(user.id, modelId);
+      
+      if (response.success && response.hasModel) {
+        setUserHasModel(true);
+        setModelInfo({
+          id: modelId,
+          ownerName: ownerName,
+          isOwnedByUser: false
+        });
+      } else {
+        // Model not found or not accessible
+        setUserHasModel(false);
+        toast({
+          title: 'Model Not Found',
+          description: 'The requested model is not available or accessible.',
+          variant: 'destructive',
+        });
+        // Redirect to home to check user's own model
+        navigate('/home');
+      }
+    } catch (error) {
+      console.error('Error checking other user model:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to check model availability',
+        variant: 'destructive',
+      });
+      navigate('/home');
+    } finally {
+      setIsLoadingModel(false);
+    }
+  };
 
   const checkUserModel = async () => {
     if (!user?.id) return;
