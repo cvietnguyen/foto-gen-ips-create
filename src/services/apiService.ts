@@ -57,9 +57,15 @@ export const checkUserModelAvailable = async (userId?: string, modelName?: strin
       headers['Authorization'] = `Bearer ${token}`;
     }
     
-    // Use the provided modelName or null for user's own model
-    const queryModelName = modelName !== undefined ? modelName : null;
-    const queryParam = queryModelName ? `modelName=${queryModelName}` : 'modelName=null';
+    // Build query parameter correctly
+    let queryParam;
+    if (modelName === null || modelName === undefined) {
+      queryParam = 'modelName=null';
+    } else {
+      queryParam = `modelName=${modelName}`;
+    }
+    
+    console.log('API Query param:', queryParam);
     
     const response = await fetch(`${API_BASE_URL}/integration/check-user-model-available?${queryParam}`, {
       method: 'GET',
@@ -70,7 +76,7 @@ export const checkUserModelAvailable = async (userId?: string, modelName?: strin
       const data = await response.json();
       return {
         hasModel: true,
-        modelName: queryModelName || userId,
+        modelName: modelName || userId,
         success: true,
         message: 'User model found successfully'
       };
