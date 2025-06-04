@@ -10,6 +10,13 @@ export const LoginButton = () => {
 
   const handleLogin = () => {
     console.log('LoginButton - Starting login process');
+    // Store the current URL path in sessionStorage before login if not already set
+    const currentPath = window.location.pathname;
+    if (currentPath.includes('/model/') && !sessionStorage.getItem('redirectPath')) {
+      console.log('LoginButton - Setting redirectPath from current URL:', currentPath);
+      sessionStorage.setItem('redirectPath', currentPath);
+    }
+    
     console.log('LoginButton - Current redirectPath in sessionStorage:', sessionStorage.getItem('redirectPath'));
     
     instance.loginPopup(loginRequest)

@@ -27,6 +27,13 @@ const LoginPage = () => {
         navigate('/home');
       }
     } else {
+      // Check the current URL for model path and store it
+      const currentPath = window.location.pathname;
+      if (currentPath.includes('/model/') && !sessionStorage.getItem('redirectPath')) {
+        console.log('LoginPage - Setting redirectPath from current URL:', currentPath);
+        sessionStorage.setItem('redirectPath', currentPath);
+      }
+      
       // Check current redirectPath in sessionStorage (debugging)
       const currentRedirectPath = sessionStorage.getItem('redirectPath');
       console.log('LoginPage - Current unauthenticated state, redirectPath in sessionStorage:', currentRedirectPath);
