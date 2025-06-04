@@ -11,8 +11,15 @@ export const LoginButton = () => {
   const handleLogin = () => {
     instance.loginPopup(loginRequest)
       .then(() => {
-        // Redirect to home page after successful login
-        navigate('/home');
+        // Check if there's a stored redirect path
+        const redirectPath = sessionStorage.getItem('redirectPath');
+        if (redirectPath) {
+          sessionStorage.removeItem('redirectPath'); // Clear stored path
+          navigate(redirectPath);
+        } else {
+          // Regular flow - redirect to home page
+          navigate('/home');
+        }
       })
       .catch((e) => {
         console.error(e);
