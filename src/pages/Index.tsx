@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useIsAuthenticated } from '@azure/msal-react';
@@ -20,19 +19,7 @@ const Index = () => {
     const isModelPath = path.includes('/model/');
     console.log('Index.tsx - isModelPath:', isModelPath);
 
-    if (isAuthenticated) {
-      if (isModelPath) {
-        console.log('Index.tsx - Detected model path, staying on current route - NO REDIRECT');
-        // Keep the original path to preserve model info - don't redirect to /home
-        // The HomePage component will handle the model path directly
-        return;
-      } else if (path === '/') {
-        console.log('Index.tsx - On root path, redirecting to /home');
-        // Only redirect to home if we're on the root path
-        navigate('/home');
-      }
-      // If we're already on /home or other paths, don't redirect
-    } else {
+    if (!isAuthenticated) {
       // Store the intended path if it's a model path
       if (isModelPath) {
         console.log('Index.tsx - Storing model path in sessionStorage:', path);
@@ -41,9 +28,21 @@ const Index = () => {
         console.log('Index.tsx - SessionStorage after storing:', sessionStorage.getItem('redirectPath'));
       }
       console.log('Index.tsx - Not authenticated, redirecting to /login');
-      // If user is not authenticated, redirect to login page
       navigate('/login');
+      return;
     }
+
+    // User is authenticated
+    if (isModelPath) {
+      console.log('Index.tsx - Authenticated user on model path, staying on current route - NO REDIRECT');
+      // Keep the original path to preserve model info - don't redirect to /home
+      return;
+    } else if (path === '/') {
+      console.log('Index.tsx - On root path, redirecting to /home');
+      // Only redirect to home if we're on the root path
+      navigate('/home');
+    }
+    // If we're already on /home or other paths, don't redirect
   }, [navigate, isAuthenticated, path]);
 
   // If authenticated and on a model path, don't show loading - let the route handle it
