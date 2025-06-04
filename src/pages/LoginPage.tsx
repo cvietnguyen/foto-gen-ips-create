@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Building2 } from 'lucide-react';
@@ -26,52 +25,20 @@ const LoginPage = () => {
       const redirectPath = sessionStorage.getItem('redirectPath');
       console.log('LoginPage - Retrieved redirectPath from sessionStorage:', redirectPath);
       
-      if (redirectPath) {
-        console.log('LoginPage - Found redirect path, clearing sessionStorage and navigating to:', redirectPath);
-        // Don't remove the redirectPath until after successful navigation
-        navigate(redirectPath);
-        console.log('LoginPage - Navigation initiated to:', redirectPath);
-        // Now clear it
+      if (redirectPath && redirectPath !== 'null') {
+        console.log('LoginPage - Found valid redirect path, navigating to:', redirectPath);
+        // Clear the redirect path first
         sessionStorage.removeItem('redirectPath');
         console.log('LoginPage - Cleared redirectPath from sessionStorage');
+        // Navigate to the stored path
+        navigate(redirectPath);
+        console.log('LoginPage - Navigation initiated to:', redirectPath);
       } else {
-        console.log('LoginPage - No redirect path found, navigating to /home');
+        console.log('LoginPage - No valid redirect path found, navigating to /home');
         navigate('/home');
       }
-    } else {
-      // When still on login page and not authenticated, check for model path
-      console.log('LoginPage - Not authenticated yet');
-      
-      // Check the current URL referrer for model path and store it
-      const referrer = document.referrer;
-      console.log('LoginPage - Document referrer:', referrer);
-      
-      // Also check the URL parameter if we have one
-      const urlParams = new URLSearchParams(location.search);
-      const fromPath = urlParams.get('from');
-      console.log('LoginPage - From URL parameter:', fromPath);
-      
-      // Check if we need to set a redirect path
-      if (
-        (referrer && referrer.includes('/model/') && !sessionStorage.getItem('redirectPath')) ||
-        (fromPath && fromPath.includes('/model/') && !sessionStorage.getItem('redirectPath'))
-      ) {
-        const pathToStore = fromPath || new URL(referrer).pathname;
-        console.log('LoginPage - Setting redirectPath from referrer/param:', pathToStore);
-        sessionStorage.setItem('redirectPath', pathToStore);
-        console.log('LoginPage - After setting, redirectPath is:', sessionStorage.getItem('redirectPath'));
-      }
-      
-      // Log all session storage items for debugging
-      console.log('LoginPage - All sessionStorage items:');
-      for (let i = 0; i < sessionStorage.length; i++) {
-        const key = sessionStorage.key(i);
-        if (key) {
-          console.log(`  - ${key}: ${sessionStorage.getItem(key)}`);
-        }
-      }
     }
-  }, [isAuthenticated, navigate, location]);
+  }, [isAuthenticated, navigate]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 p-4">

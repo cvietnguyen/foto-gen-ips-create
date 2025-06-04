@@ -9,10 +9,12 @@ const Index = () => {
   const navigate = useNavigate();
   const isAuthenticated = useIsAuthenticated();
   const location = useLocation();
+  const { username, modelName } = useParams();
   const path = location.pathname;
 
   console.log('Index.tsx - Current path:', path);
   console.log('Index.tsx - isAuthenticated:', isAuthenticated);
+  console.log('Index.tsx - username:', username, 'modelName:', modelName);
   console.log('Index.tsx - sessionStorage before any logic:', sessionStorage.getItem('redirectPath'));
 
   useEffect(() => {
@@ -40,17 +42,10 @@ const Index = () => {
             console.log(`  - ${key}: ${sessionStorage.getItem(key)}`);
           }
         }
-
-        // Add a small delay to ensure sessionStorage is updated before navigating
-        setTimeout(() => {
-          console.log('Index.tsx - After delay, redirectPath before navigate:', sessionStorage.getItem('redirectPath'));
-          navigate('/login');
-          console.log('Index.tsx - Navigated to /login from model path');
-        }, 200);
-      } else {
-        console.log('Index.tsx - Not authenticated, redirecting to /login from non-model path');
-        navigate('/login');
       }
+      
+      console.log('Index.tsx - Not authenticated, redirecting to /login');
+      navigate('/login');
       return;
     }
 
