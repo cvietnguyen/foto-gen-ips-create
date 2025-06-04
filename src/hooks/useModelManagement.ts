@@ -35,12 +35,13 @@ export const useModelManagement = (user: User | null, isAuthenticated: boolean) 
     
     setIsLoadingModel(true);
     try {
+      // Pass the specific model ID to the API
       const response = await checkUserModelAvailable(user.id, modelId);
       
       if (response.success && response.hasModel) {
         setUserHasModel(true);
         setModelInfo({
-          id: modelId,
+          id: modelId, // Use the model ID from URL
           ownerName: ownerName,
           isOwnedByUser: false
         });
@@ -71,6 +72,7 @@ export const useModelManagement = (user: User | null, isAuthenticated: boolean) 
     
     setIsLoadingModel(true);
     try {
+      // For user's own model, pass null to let backend find it
       const response = await checkUserModelAvailable(user.id, null);
       
       if (response.success) {
