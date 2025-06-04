@@ -15,8 +15,9 @@ const Index = () => {
 
     if (isAuthenticated) {
       if (isModelPath) {
-        // Keep the original path to preserve model info
-        navigate(path);
+        // Keep the original path to preserve model info - don't redirect to /home
+        // The HomePage component will handle the model path directly
+        return;
       } else {
         // Regular flow - redirect to home page
         navigate('/home');
@@ -30,6 +31,11 @@ const Index = () => {
       navigate('/login');
     }
   }, [navigate, isAuthenticated, path]);
+
+  // If authenticated and on a model path, don't show loading - let the route handle it
+  if (isAuthenticated && path.includes('/model/')) {
+    return null;
+  }
 
   return (
     <Layout>
