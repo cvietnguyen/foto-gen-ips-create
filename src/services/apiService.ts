@@ -38,9 +38,13 @@ export interface TrainModelResponse {
 // 1. API to check if user has model or not
 export const checkUserModelAvailable = async (userId?: string, modelName?: string | null): Promise<CheckUserModelResponse> => {
   try {
-    console.log('Checking user model availability for user:', userId, 'model:', modelName);
+    console.log('apiService.checkUserModelAvailable called with:');
+    console.log('  - userId:', userId);
+    console.log('  - modelName:', modelName);
+    console.log('  - modelName type:', typeof modelName);
     
     if (!userId) {
+      console.log('apiService - No userId provided, returning error');
       return {
         hasModel: false,
         success: false,
@@ -61,19 +65,25 @@ export const checkUserModelAvailable = async (userId?: string, modelName?: strin
     let queryParam;
     if (modelName === null || modelName === undefined) {
       queryParam = 'modelName=null';
+      console.log('apiService - modelName is null/undefined, setting queryParam to:', queryParam);
     } else {
       queryParam = `modelName=${modelName}`;
+      console.log('apiService - modelName has value, setting queryParam to:', queryParam);
     }
     
-    console.log('API Query param:', queryParam);
+    const fullUrl = `${API_BASE_URL}/integration/check-user-model-available?${queryParam}`;
+    console.log('apiService - Full API URL:', fullUrl);
     
-    const response = await fetch(`${API_BASE_URL}/integration/check-user-model-available?${queryParam}`, {
+    const response = await fetch(fullUrl, {
       method: 'GET',
       headers: headers
     });
     
+    console.log('apiService - Response status:', response.status);
+    
     if (response.status === 200) {
       const data = await response.json();
+      console.log('apiService - Response data (200):', data);
       return {
         hasModel: true,
         modelName: modelName || userId,
@@ -82,12 +92,14 @@ export const checkUserModelAvailable = async (userId?: string, modelName?: strin
       };
     } else if (response.status === 404) {
       const data = await response.json();
+      console.log('apiService - Response data (404):', data);
       return {
         hasModel: false,
         success: false,
         message: data.message || 'Model not found'
       };
     } else {
+      console.log('apiService - Unexpected response status:', response.status);
       return {
         hasModel: false,
         success: false,
@@ -95,7 +107,7 @@ export const checkUserModelAvailable = async (userId?: string, modelName?: strin
       };
     }
   } catch (error) {
-    console.error('Error checking user model:', error);
+    console.error('apiService - Error checking user model:', error);
     return {
       hasModel: false,
       success: false,

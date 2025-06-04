@@ -21,27 +21,35 @@ export const useModelManagement = (user: User | null, isAuthenticated: boolean) 
   const [modelInfo, setModelInfo] = useState<ModelInfo | null>(null);
   const [isLoadingModel, setIsLoadingModel] = useState(true);
 
+  console.log('useModelManagement hook - params:', { username, modelName });
+  console.log('useModelManagement hook - location.pathname:', location.pathname);
+  console.log('useModelManagement hook - isAuthenticated:', isAuthenticated);
+  console.log('useModelManagement hook - user?.id:', user?.id);
+
   useEffect(() => {
+    console.log('useModelManagement useEffect triggered');
+    console.log('useModelManagement effect - username:', username, 'modelName:', modelName, 'pathname:', location.pathname);
+    console.log('useModelManagement effect - isAuthenticated:', isAuthenticated, 'user?.id:', user?.id);
+    
     if (isAuthenticated && user?.id) {
-      console.log('useModelManagement effect - username:', username, 'modelName:', modelName, 'pathname:', location.pathname);
-      
       // Check if we're coming from a shared model URL or if there's stored model info
       const storedModelInfo = sessionStorage.getItem('sharedModelInfo');
+      console.log('useModelManagement - storedModelInfo:', storedModelInfo);
       
       if (username && modelName) {
         // When accessing another user's model via URL, use the modelName from params
-        console.log('Detected shared model URL - calling checkOtherUserModel with:', modelName, username);
+        console.log('useModelManagement - Detected shared model URL - calling checkOtherUserModel with:', modelName, username);
         checkOtherUserModel(modelName, username);
       } else if (storedModelInfo && location.pathname === '/home') {
         // When on /home but we have stored shared model info, use it
-        console.log('Using stored shared model info on /home');
+        console.log('useModelManagement - Using stored shared model info on /home');
         const parsed = JSON.parse(storedModelInfo);
         setModelInfo(parsed);
         setUserHasModel(true);
         setIsLoadingModel(false);
       } else {
         // When accessing user's own model, let backend find it and clear any stored shared model
-        console.log('Accessing user own model - clearing stored shared model');
+        console.log('useModelManagement - Accessing user own model - clearing stored shared model');
         sessionStorage.removeItem('sharedModelInfo');
         checkUserModel();
       }
@@ -49,13 +57,19 @@ export const useModelManagement = (user: User | null, isAuthenticated: boolean) 
   }, [isAuthenticated, user?.id, username, modelName, location.pathname]);
 
   const checkOtherUserModel = async (modelId: string, ownerName: string) => {
-    if (!user?.id) return;
+    console.log('checkOtherUserModel called with:', { modelId, ownerName, userId: user?.id });
+    
+    if (!user?.id) {
+      console.log('checkOtherUserModel - No user ID, returning');
+      return;
+    }
     
     setIsLoadingModel(true);
     try {
       // Pass the specific model ID from URL to the API
-      console.log('Checking other user model with modelId:', modelId);
+      console.log('checkOtherUserModel - Checking other user model with modelId:', modelId);
       const response = await checkUserModelAvailable(user.id, modelId);
+      console.log('checkOtherUserModel - API response:', response);
       
       if (response.success && response.hasModel) {
         const sharedModelInfo = {
@@ -64,12 +78,14 @@ export const useModelManagement = (user: User | null, isAuthenticated: boolean) 
           isOwnedByUser: false
         };
         
+        console.log('checkOtherUserModel - Setting shared model info:', sharedModelInfo);
         setUserHasModel(true);
         setModelInfo(sharedModelInfo);
         
         // Store the shared model info for use when navigating to /home
         sessionStorage.setItem('sharedModelInfo', JSON.stringify(sharedModelInfo));
       } else {
+        console.log('checkOtherUserModel - Model not found or not accessible');
         setUserHasModel(false);
         toast({
           title: 'Model Not Found',
@@ -79,7 +95,7 @@ export const useModelManagement = (user: User | null, isAuthenticated: boolean) 
         navigate('/home');
       }
     } catch (error) {
-      console.error('Error checking other user model:', error);
+      console.error('checkOtherUserModel - Error checking other user model:', error);
       toast({
         title: 'Error',
         description: 'Failed to check model availability',
@@ -92,13 +108,19 @@ export const useModelManagement = (user: User | null, isAuthenticated: boolean) 
   };
 
   const checkUserModel = async () => {
-    if (!user?.id) return;
+    console.log('checkUserModel called with userId:', user?.id);
+    
+    if (!user?.id) {
+      console.log('checkUserModel - No user ID, returning');
+      return;
+    }
     
     setIsLoadingModel(true);
     try {
       // For user's own model, pass null to let backend find it
-      console.log('Checking user own model, passing null to API');
+      console.log('checkUserModel - Checking user own model, passing null to API');
       const response = await checkUserModelAvailable(user.id, null);
+      console.log('checkUserModel - API response:', response);
       
       if (response.success) {
         setUserHasModel(response.hasModel);
@@ -110,7 +132,7 @@ export const useModelManagement = (user: User | null, isAuthenticated: boolean) 
           });
         }
       } else {
-        console.error('Failed to check user model:', response.message);
+        console.error('checkUserModel - Failed to check user model:', response.message);
         toast({
           title: 'Error',
           description: 'Failed to check model availability',
@@ -118,7 +140,7 @@ export const useModelManagement = (user: User | null, isAuthenticated: boolean) 
         });
       }
     } catch (error) {
-      console.error('Error checking user model:', error);
+      console.error('checkUserModel - Error checking user model:', error);
       toast({
         title: 'Error',
         description: 'Failed to check model availability',
