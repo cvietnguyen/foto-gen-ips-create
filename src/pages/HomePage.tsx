@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
@@ -41,7 +40,14 @@ const HomePage = () => {
   };
 
   const handleSwitchToUserModel = () => {
-    navigate('/home');
+    console.log('HomePage - Switch to user model clicked');
+    // Clear any stored shared model info
+    sessionStorage.removeItem('sharedModelInfo');
+    console.log('HomePage - Cleared sharedModelInfo from sessionStorage');
+    // Navigate to home and force a reload of user's own model
+    navigate('/home', { replace: true });
+    // Refresh the page to ensure clean state
+    window.location.reload();
   };
 
   if (!isAuthenticated) {
