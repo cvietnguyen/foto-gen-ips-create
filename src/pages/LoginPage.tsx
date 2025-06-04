@@ -11,13 +11,19 @@ const LoginPage = () => {
   const navigate = useNavigate();
   
   useEffect(() => {
+    console.log('LoginPage useEffect - isAuthenticated:', isAuthenticated);
+    
     if (isAuthenticated) {
       // Check if there's a stored redirect path
       const redirectPath = sessionStorage.getItem('redirectPath');
+      console.log('LoginPage - Retrieved redirectPath from sessionStorage:', redirectPath);
+      
       if (redirectPath) {
+        console.log('LoginPage - Found redirect path, clearing sessionStorage and navigating to:', redirectPath);
         sessionStorage.removeItem('redirectPath'); // Clear stored path
         navigate(redirectPath);
       } else {
+        console.log('LoginPage - No redirect path found, navigating to /home');
         navigate('/home');
       }
     }
