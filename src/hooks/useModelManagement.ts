@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { checkUserModelAvailable } from '@/services/apiService';
 import { useToast } from '@/hooks/use-toast';
 import { User } from '@/hooks/useUserData';
@@ -14,6 +14,7 @@ interface ModelInfo {
 export const useModelManagement = (user: User | null, isAuthenticated: boolean) => {
   const navigate = useNavigate();
   const { username, modelName } = useParams();
+  const location = useLocation();
   const { toast } = useToast();
   
   const [userHasModel, setUserHasModel] = useState<boolean>(false);
@@ -22,15 +23,25 @@ export const useModelManagement = (user: User | null, isAuthenticated: boolean) 
 
   useEffect(() => {
     if (isAuthenticated && user?.id) {
+      // Check if we're coming from a shared model URL or if there's stored model info
+      const storedModelInfo = sessionStorage.getItem('sharedModelInfo');
+      
       if (username && modelName) {
         // When accessing another user's model via URL, use the modelName from params
         checkOtherUserModel(modelName, username);
+      } else if (storedModelInfo && location.pathname === '/home') {
+        // When on /home but we have stored shared model info, use it
+        const parsed = JSON.parse(storedModelInfo);
+        setModelInfo(parsed);
+        setUserHasModel(true);
+        setIsLoadingModel(false);
       } else {
-        // When accessing user's own model, let backend find it
+        // When accessing user's own model, let backend find it and clear any stored shared model
+        sessionStorage.removeItem('sharedModelInfo');
         checkUserModel();
       }
     }
-  }, [isAuthenticated, user?.id, username, modelName]);
+  }, [isAuthenticated, user?.id, username, modelName, location.pathname]);
 
   const checkOtherUserModel = async (modelId: string, ownerName: string) => {
     if (!user?.id) return;
@@ -42,12 +53,17 @@ export const useModelManagement = (user: User | null, isAuthenticated: boolean) 
       const response = await checkUserModelAvailable(user.id, modelId);
       
       if (response.success && response.hasModel) {
-        setUserHasModel(true);
-        setModelInfo({
+        const sharedModelInfo = {
           id: modelId, // Use the model ID from URL params
           ownerName: ownerName,
           isOwnedByUser: false
-        });
+        };
+        
+        setUserHasModel(true);
+        setModelInfo(sharedModelInfo);
+        
+        // Store the shared model info for use when navigating to /home
+        sessionStorage.setItem('sharedModelInfo', JSON.stringify(sharedModelInfo));
       } else {
         setUserHasModel(false);
         toast({
