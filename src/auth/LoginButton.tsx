@@ -9,20 +9,26 @@ export const LoginButton = () => {
   const navigate = useNavigate();
 
   const handleLogin = () => {
+    console.log('LoginButton - Starting login process');
+    console.log('LoginButton - Current redirectPath in sessionStorage:', sessionStorage.getItem('redirectPath'));
+    
     instance.loginPopup(loginRequest)
       .then(() => {
         // Check if there's a stored redirect path
         const redirectPath = sessionStorage.getItem('redirectPath');
+        console.log('LoginButton - After login, redirectPath from sessionStorage:', redirectPath);
+        
         if (redirectPath) {
+          console.log('LoginButton - Found redirect path, navigating to:', redirectPath);
           sessionStorage.removeItem('redirectPath'); // Clear stored path
           navigate(redirectPath);
         } else {
-          // Regular flow - redirect to home page
+          console.log('LoginButton - No redirect path found, navigating to /home');
           navigate('/home');
         }
       })
       .catch((e) => {
-        console.error(e);
+        console.error('LoginButton - Login error:', e);
       });
   };
 

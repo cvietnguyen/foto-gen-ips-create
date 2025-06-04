@@ -26,6 +26,10 @@ const LoginPage = () => {
         console.log('LoginPage - No redirect path found, navigating to /home');
         navigate('/home');
       }
+    } else {
+      // Check current redirectPath in sessionStorage (debugging)
+      const currentRedirectPath = sessionStorage.getItem('redirectPath');
+      console.log('LoginPage - Current unauthenticated state, redirectPath in sessionStorage:', currentRedirectPath);
     }
   }, [isAuthenticated, navigate]);
 
