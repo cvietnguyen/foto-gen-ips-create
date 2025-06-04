@@ -49,9 +49,11 @@ const Index = () => {
       return;
     }
 
-    // User is authenticated
+    // User is authenticated - handle different path types
     if (isModelPath) {
       console.log('Index.tsx - Authenticated user on model path, will render HomePage component');
+      // Clear any stored redirect path since we're now on the intended page
+      sessionStorage.removeItem('redirectPath');
       // Don't redirect, let the component render HomePage
       return;
     } else if (path === '/') {
@@ -61,6 +63,20 @@ const Index = () => {
     }
     // If we're already on /home or other paths, don't redirect
   }, [navigate, isAuthenticated, path]);
+
+  // Show loading while authentication state is being determined
+  if (isAuthenticated === undefined) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">Loading...</h1>
+            <p className="text-gray-600">Checking authentication status</p>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   // If authenticated and on a model path, render HomePage
   if (isAuthenticated && path.includes('/model/')) {
