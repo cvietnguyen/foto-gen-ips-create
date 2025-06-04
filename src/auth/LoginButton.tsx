@@ -10,11 +10,16 @@ export const LoginButton = () => {
 
   const handleLogin = () => {
     console.log('LoginButton - Starting login process');
+    
     // Store the current URL path in sessionStorage before login if not already set
     const currentPath = window.location.pathname;
-    if (currentPath.includes('/model/') && !sessionStorage.getItem('redirectPath')) {
-      console.log('LoginButton - Setting redirectPath from current URL:', currentPath);
+    console.log('LoginButton - Current path:', currentPath);
+    
+    if (currentPath.includes('/model/')) {
+      console.log('LoginButton - Found model path, setting redirectPath');
+      // Always set the redirectPath for model paths, overwrite any existing value
       sessionStorage.setItem('redirectPath', currentPath);
+      console.log('LoginButton - Set redirectPath to:', currentPath);
     }
     
     console.log('LoginButton - Current redirectPath in sessionStorage:', sessionStorage.getItem('redirectPath'));
@@ -27,8 +32,12 @@ export const LoginButton = () => {
         
         if (redirectPath) {
           console.log('LoginButton - Found redirect path, navigating to:', redirectPath);
-          sessionStorage.removeItem('redirectPath'); // Clear stored path
+          // Don't remove the redirectPath until after successful navigation
           navigate(redirectPath);
+          console.log('LoginButton - Navigation initiated to:', redirectPath);
+          // Now clear it after navigation is initiated
+          sessionStorage.removeItem('redirectPath');
+          console.log('LoginButton - Cleared redirectPath from sessionStorage');
         } else {
           console.log('LoginButton - No redirect path found, navigating to /home');
           navigate('/home');
