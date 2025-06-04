@@ -21,15 +21,16 @@ const Index = () => {
 
     if (isAuthenticated) {
       if (isModelPath) {
-        console.log('Index.tsx - Detected model path, staying on current route');
+        console.log('Index.tsx - Detected model path, staying on current route - NO REDIRECT');
         // Keep the original path to preserve model info - don't redirect to /home
         // The HomePage component will handle the model path directly
         return;
-      } else {
-        console.log('Index.tsx - Regular path, redirecting to /home');
-        // Regular flow - redirect to home page
+      } else if (path === '/') {
+        console.log('Index.tsx - On root path, redirecting to /home');
+        // Only redirect to home if we're on the root path
         navigate('/home');
       }
+      // If we're already on /home or other paths, don't redirect
     } else {
       // Store the intended path if it's a model path
       if (isModelPath) {
@@ -45,6 +46,12 @@ const Index = () => {
   // If authenticated and on a model path, don't show loading - let the route handle it
   if (isAuthenticated && path.includes('/model/')) {
     console.log('Index.tsx - Returning null for model path');
+    return null;
+  }
+
+  // If authenticated and on home, don't show loading
+  if (isAuthenticated && path === '/home') {
+    console.log('Index.tsx - Returning null for home path');
     return null;
   }
 
