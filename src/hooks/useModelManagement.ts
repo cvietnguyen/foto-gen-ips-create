@@ -23,8 +23,10 @@ export const useModelManagement = (user: User | null, isAuthenticated: boolean) 
   useEffect(() => {
     if (isAuthenticated && user?.id) {
       if (username && modelName) {
+        // When accessing another user's model via URL, use the modelName from params
         checkOtherUserModel(modelName, username);
       } else {
+        // When accessing user's own model, let backend find it
         checkUserModel();
       }
     }
@@ -35,13 +37,14 @@ export const useModelManagement = (user: User | null, isAuthenticated: boolean) 
     
     setIsLoadingModel(true);
     try {
-      // Pass the specific model ID to the API
+      // Pass the specific model ID from URL to the API
+      console.log('Checking other user model with modelId:', modelId);
       const response = await checkUserModelAvailable(user.id, modelId);
       
       if (response.success && response.hasModel) {
         setUserHasModel(true);
         setModelInfo({
-          id: modelId, // Use the model ID from URL
+          id: modelId, // Use the model ID from URL params
           ownerName: ownerName,
           isOwnedByUser: false
         });
@@ -73,6 +76,7 @@ export const useModelManagement = (user: User | null, isAuthenticated: boolean) 
     setIsLoadingModel(true);
     try {
       // For user's own model, pass null to let backend find it
+      console.log('Checking user own model, passing null to API');
       const response = await checkUserModelAvailable(user.id, null);
       
       if (response.success) {
