@@ -1,4 +1,3 @@
-
 const API_BASE_URL = 'http://localhost:5208/api';
 
 export interface GeneratePhotoRequest {
@@ -61,18 +60,15 @@ export const checkUserModelAvailable = async (userId?: string, modelName?: strin
       headers['Authorization'] = `Bearer ${token}`;
     }
     
-    // Build query parameter correctly
-    console.log(modelName)
-    let queryParam;
-    if (modelName === null || modelName === undefined) {
-      queryParam = 'modelName=null';
-      console.log('apiService - modelName is null/undefined, setting queryParam to:', queryParam);
+    // Build URL - only add modelName parameter if it's not null
+    let fullUrl = `${API_BASE_URL}/integration/check-user-model-available`;
+    if (modelName !== null && modelName !== undefined) {
+      fullUrl += `?modelName=${modelName}`;
+      console.log('apiService - Added modelName to URL:', modelName);
     } else {
-      queryParam = `modelName=${modelName}`;
-      console.log('apiService - modelName has value, setting queryParam to:', queryParam);
+      console.log('apiService - modelName is null/undefined, not adding to URL');
     }
     
-    const fullUrl = `${API_BASE_URL}/integration/check-user-model-available?${queryParam}`;
     console.log('apiService - Full API URL:', fullUrl);
     
     const response = await fetch(fullUrl, {
