@@ -28,9 +28,16 @@ const Index = () => {
         // Make sure to store the path with the full URL
         sessionStorage.setItem('redirectPath', path);
         console.log('Index.tsx - SessionStorage after storing:', sessionStorage.getItem('redirectPath'));
+
+        // Add a small delay to ensure sessionStorage is updated before navigating
+        setTimeout(() => {
+          console.log('Index.tsx - After delay, redirectPath:', sessionStorage.getItem('redirectPath'));
+          navigate('/login');
+        }, 100);
+      } else {
+        console.log('Index.tsx - Not authenticated, redirecting to /login');
+        navigate('/login');
       }
-      console.log('Index.tsx - Not authenticated, redirecting to /login');
-      navigate('/login');
       return;
     }
 
