@@ -25,15 +25,26 @@ const Index = () => {
       if (isModelPath) {
         console.log('Index.tsx - Storing model path in sessionStorage:', path);
         console.log('Index.tsx - SessionStorage before storing:', sessionStorage.getItem('redirectPath'));
-        // Make sure to store the path with the full URL
+        
+        // Always set the redirectPath for model paths, overwrite any existing value
         sessionStorage.setItem('redirectPath', path);
         console.log('Index.tsx - SessionStorage after storing:', sessionStorage.getItem('redirectPath'));
+
+        // Log all session storage items for debugging
+        console.log('Index.tsx - All sessionStorage items:');
+        for (let i = 0; i < sessionStorage.length; i++) {
+          const key = sessionStorage.key(i);
+          if (key) {
+            console.log(`  - ${key}: ${sessionStorage.getItem(key)}`);
+          }
+        }
 
         // Add a small delay to ensure sessionStorage is updated before navigating
         setTimeout(() => {
           console.log('Index.tsx - After delay, redirectPath:', sessionStorage.getItem('redirectPath'));
           navigate('/login');
-        }, 100);
+          console.log('Index.tsx - Navigated to /login');
+        }, 200); // Increased delay to ensure storage is updated
       } else {
         console.log('Index.tsx - Not authenticated, redirecting to /login');
         navigate('/login');

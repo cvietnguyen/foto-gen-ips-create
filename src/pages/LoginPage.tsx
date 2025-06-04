@@ -4,14 +4,22 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Building2 } from 'lucide-react';
 import { LoginButton } from '@/auth/LoginButton';
 import { useIsAuthenticated, useMsal } from '@azure/msal-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const LoginPage = () => {
   const isAuthenticated = useIsAuthenticated();
   const navigate = useNavigate();
+  const location = useLocation();
+  const currentPath = location.pathname;
+  
+  console.log('LoginPage - Component loaded');
+  console.log('LoginPage - Current path:', currentPath);
+  console.log('LoginPage - isAuthenticated:', isAuthenticated);
+  console.log('LoginPage - redirectPath in sessionStorage:', sessionStorage.getItem('redirectPath'));
   
   useEffect(() => {
     console.log('LoginPage useEffect - isAuthenticated:', isAuthenticated);
+    console.log('LoginPage useEffect - Current redirectPath:', sessionStorage.getItem('redirectPath'));
     
     if (isAuthenticated) {
       // Check if there's a stored redirect path
@@ -20,25 +28,50 @@ const LoginPage = () => {
       
       if (redirectPath) {
         console.log('LoginPage - Found redirect path, clearing sessionStorage and navigating to:', redirectPath);
-        sessionStorage.removeItem('redirectPath'); // Clear stored path
+        // Don't remove the redirectPath until after successful navigation
         navigate(redirectPath);
+        console.log('LoginPage - Navigation initiated to:', redirectPath);
+        // Now clear it
+        sessionStorage.removeItem('redirectPath');
+        console.log('LoginPage - Cleared redirectPath from sessionStorage');
       } else {
         console.log('LoginPage - No redirect path found, navigating to /home');
         navigate('/home');
       }
     } else {
-      // Check the current URL for model path and store it
-      const currentPath = window.location.pathname;
-      if (currentPath.includes('/model/') && !sessionStorage.getItem('redirectPath')) {
-        console.log('LoginPage - Setting redirectPath from current URL:', currentPath);
-        sessionStorage.setItem('redirectPath', currentPath);
+      // When still on login page and not authenticated, check for model path
+      console.log('LoginPage - Not authenticated yet');
+      
+      // Check the current URL referrer for model path and store it
+      const referrer = document.referrer;
+      console.log('LoginPage - Document referrer:', referrer);
+      
+      // Also check the URL parameter if we have one
+      const urlParams = new URLSearchParams(location.search);
+      const fromPath = urlParams.get('from');
+      console.log('LoginPage - From URL parameter:', fromPath);
+      
+      // Check if we need to set a redirect path
+      if (
+        (referrer && referrer.includes('/model/') && !sessionStorage.getItem('redirectPath')) ||
+        (fromPath && fromPath.includes('/model/') && !sessionStorage.getItem('redirectPath'))
+      ) {
+        const pathToStore = fromPath || new URL(referrer).pathname;
+        console.log('LoginPage - Setting redirectPath from referrer/param:', pathToStore);
+        sessionStorage.setItem('redirectPath', pathToStore);
+        console.log('LoginPage - After setting, redirectPath is:', sessionStorage.getItem('redirectPath'));
       }
       
-      // Check current redirectPath in sessionStorage (debugging)
-      const currentRedirectPath = sessionStorage.getItem('redirectPath');
-      console.log('LoginPage - Current unauthenticated state, redirectPath in sessionStorage:', currentRedirectPath);
+      // Log all session storage items for debugging
+      console.log('LoginPage - All sessionStorage items:');
+      for (let i = 0; i < sessionStorage.length; i++) {
+        const key = sessionStorage.key(i);
+        if (key) {
+          console.log(`  - ${key}: ${sessionStorage.getItem(key)}`);
+        }
+      }
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, location]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 p-4">
