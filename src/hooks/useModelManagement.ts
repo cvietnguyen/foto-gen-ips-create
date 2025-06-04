@@ -23,20 +23,25 @@ export const useModelManagement = (user: User | null, isAuthenticated: boolean) 
 
   useEffect(() => {
     if (isAuthenticated && user?.id) {
+      console.log('useModelManagement effect - username:', username, 'modelName:', modelName, 'pathname:', location.pathname);
+      
       // Check if we're coming from a shared model URL or if there's stored model info
       const storedModelInfo = sessionStorage.getItem('sharedModelInfo');
       
       if (username && modelName) {
         // When accessing another user's model via URL, use the modelName from params
+        console.log('Detected shared model URL - calling checkOtherUserModel with:', modelName, username);
         checkOtherUserModel(modelName, username);
       } else if (storedModelInfo && location.pathname === '/home') {
         // When on /home but we have stored shared model info, use it
+        console.log('Using stored shared model info on /home');
         const parsed = JSON.parse(storedModelInfo);
         setModelInfo(parsed);
         setUserHasModel(true);
         setIsLoadingModel(false);
       } else {
         // When accessing user's own model, let backend find it and clear any stored shared model
+        console.log('Accessing user own model - clearing stored shared model');
         sessionStorage.removeItem('sharedModelInfo');
         checkUserModel();
       }
