@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import { checkUserModelAvailable } from '@/services/apiService';
+import { checkUserModelAvailable, getAuthToken } from '@/services/apiService';
 import { useToast } from '@/hooks/use-toast';
 import { User } from '@/hooks/useUserData';
 
@@ -25,13 +25,17 @@ export const useModelManagement = (user: User | null, isAuthenticated: boolean) 
   console.log('useModelManagement hook - location.pathname:', location.pathname);
   console.log('useModelManagement hook - isAuthenticated:', isAuthenticated);
   console.log('useModelManagement hook - user?.id:', user?.id);
+  console.log('useModelManagement hook - authToken available:', !!getAuthToken());
 
   useEffect(() => {
     console.log('useModelManagement useEffect triggered');
     console.log('useModelManagement effect - username:', username, 'modelName:', modelName, 'pathname:', location.pathname);
     console.log('useModelManagement effect - isAuthenticated:', isAuthenticated, 'user?.id:', user?.id);
+    console.log('useModelManagement effect - authToken available:', !!getAuthToken());
     
-    if (isAuthenticated && user?.id) {
+    // Wait for both authentication and auth token to be available
+    if (isAuthenticated && user?.id && getAuthToken()) {
+      console.log('useModelManagement - All conditions met, proceeding with model check');
       // Check if we're coming from a shared model URL or if there's stored model info
       const storedModelInfo = sessionStorage.getItem('sharedModelInfo');
       console.log('useModelManagement - storedModelInfo:', storedModelInfo);
@@ -53,14 +57,21 @@ export const useModelManagement = (user: User | null, isAuthenticated: boolean) 
         sessionStorage.removeItem('sharedModelInfo');
         checkUserModel();
       }
+    } else if (isAuthenticated && user?.id && !getAuthToken()) {
+      console.log('useModelManagement - User authenticated but no auth token yet, waiting...');
+      // Don't set loading to false here, wait for token
+    } else if (!isAuthenticated) {
+      console.log('useModelManagement - User not authenticated, setting loading to false');
+      setIsLoadingModel(false);
     }
-  }, [isAuthenticated, user?.id, username, modelName, location.pathname]);
+  }, [isAuthenticated, user?.id, username, modelName, location.pathname, getAuthToken()]);
 
   const checkOtherUserModel = async (modelId: string, ownerName: string) => {
     console.log('checkOtherUserModel called with:', { modelId, ownerName, userId: user?.id });
+    console.log('checkOtherUserModel - authToken available:', !!getAuthToken());
     
-    if (!user?.id) {
-      console.log('checkOtherUserModel - No user ID, returning');
+    if (!user?.id || !getAuthToken()) {
+      console.log('checkOtherUserModel - No user ID or auth token, returning');
       return;
     }
     
@@ -109,9 +120,10 @@ export const useModelManagement = (user: User | null, isAuthenticated: boolean) 
 
   const checkUserModel = async () => {
     console.log('checkUserModel called with userId:', user?.id);
+    console.log('checkUserModel - authToken available:', !!getAuthToken());
     
-    if (!user?.id) {
-      console.log('checkUserModel - No user ID, returning');
+    if (!user?.id || !getAuthToken()) {
+      console.log('checkUserModel - No user ID or auth token, returning');
       return;
     }
     
