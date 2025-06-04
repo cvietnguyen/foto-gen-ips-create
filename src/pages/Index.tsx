@@ -9,24 +9,34 @@ const Index = () => {
   const location = useLocation();
   const path = location.pathname;
 
+  console.log('Index.tsx - Current path:', path);
+  console.log('Index.tsx - isAuthenticated:', isAuthenticated);
+
   useEffect(() => {
+    console.log('Index.tsx useEffect - path:', path, 'isAuthenticated:', isAuthenticated);
+    
     // Check if URL path contains '/model/'
     const isModelPath = path.includes('/model/');
+    console.log('Index.tsx - isModelPath:', isModelPath);
 
     if (isAuthenticated) {
       if (isModelPath) {
+        console.log('Index.tsx - Detected model path, staying on current route');
         // Keep the original path to preserve model info - don't redirect to /home
         // The HomePage component will handle the model path directly
         return;
       } else {
+        console.log('Index.tsx - Regular path, redirecting to /home');
         // Regular flow - redirect to home page
         navigate('/home');
       }
     } else {
       // Store the intended path if it's a model path
       if (isModelPath) {
+        console.log('Index.tsx - Storing model path in sessionStorage:', path);
         sessionStorage.setItem('redirectPath', path);
       }
+      console.log('Index.tsx - Not authenticated, redirecting to /login');
       // If user is not authenticated, redirect to login page
       navigate('/login');
     }
@@ -34,6 +44,7 @@ const Index = () => {
 
   // If authenticated and on a model path, don't show loading - let the route handle it
   if (isAuthenticated && path.includes('/model/')) {
+    console.log('Index.tsx - Returning null for model path');
     return null;
   }
 
