@@ -27,7 +27,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/home" element={<HomePage />} />
-            <Route path="/model/:username/:modelName" element={<HomePage />} />
+            <Route path="/model/:username/:modelName" element={<Index />} />
             <Route path="/training" element={<TrainingPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

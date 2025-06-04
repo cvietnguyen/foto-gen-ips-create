@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useIsAuthenticated } from '@azure/msal-react';
 import Layout from '@/components/Layout';
+import HomePage from './HomePage';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ const Index = () => {
 
   console.log('Index.tsx - Current path:', path);
   console.log('Index.tsx - isAuthenticated:', isAuthenticated);
+  console.log('Index.tsx - sessionStorage before any logic:', sessionStorage.getItem('redirectPath'));
 
   useEffect(() => {
     console.log('Index.tsx useEffect - path:', path, 'isAuthenticated:', isAuthenticated);
@@ -23,7 +25,7 @@ const Index = () => {
     if (!isAuthenticated) {
       // Store the intended path if it's a model path
       if (isModelPath) {
-        console.log('Index.tsx - Storing model path in sessionStorage:', path);
+        console.log('Index.tsx - User not authenticated, storing model path in sessionStorage:', path);
         console.log('Index.tsx - SessionStorage before storing:', sessionStorage.getItem('redirectPath'));
         
         // Always set the redirectPath for model paths, overwrite any existing value
@@ -31,7 +33,7 @@ const Index = () => {
         console.log('Index.tsx - SessionStorage after storing:', sessionStorage.getItem('redirectPath'));
 
         // Log all session storage items for debugging
-        console.log('Index.tsx - All sessionStorage items:');
+        console.log('Index.tsx - All sessionStorage items after storing:');
         for (let i = 0; i < sessionStorage.length; i++) {
           const key = sessionStorage.key(i);
           if (key) {
@@ -41,12 +43,12 @@ const Index = () => {
 
         // Add a small delay to ensure sessionStorage is updated before navigating
         setTimeout(() => {
-          console.log('Index.tsx - After delay, redirectPath:', sessionStorage.getItem('redirectPath'));
+          console.log('Index.tsx - After delay, redirectPath before navigate:', sessionStorage.getItem('redirectPath'));
           navigate('/login');
-          console.log('Index.tsx - Navigated to /login');
-        }, 200); // Increased delay to ensure storage is updated
+          console.log('Index.tsx - Navigated to /login from model path');
+        }, 200);
       } else {
-        console.log('Index.tsx - Not authenticated, redirecting to /login');
+        console.log('Index.tsx - Not authenticated, redirecting to /login from non-model path');
         navigate('/login');
       }
       return;
@@ -54,8 +56,8 @@ const Index = () => {
 
     // User is authenticated
     if (isModelPath) {
-      console.log('Index.tsx - Authenticated user on model path, staying on current route - NO REDIRECT');
-      // Keep the original path to preserve model info - don't redirect to /home
+      console.log('Index.tsx - Authenticated user on model path, will render HomePage component');
+      // Don't redirect, let the component render HomePage
       return;
     } else if (path === '/') {
       console.log('Index.tsx - On root path, redirecting to /home');
@@ -65,15 +67,15 @@ const Index = () => {
     // If we're already on /home or other paths, don't redirect
   }, [navigate, isAuthenticated, path]);
 
-  // If authenticated and on a model path, don't show loading - let the route handle it
+  // If authenticated and on a model path, render HomePage
   if (isAuthenticated && path.includes('/model/')) {
-    console.log('Index.tsx - Returning null for model path');
-    return null;
+    console.log('Index.tsx - Rendering HomePage for authenticated user on model path');
+    return <HomePage />;
   }
 
-  // If authenticated and on home, don't show loading
+  // If authenticated and on home, redirect to /home route
   if (isAuthenticated && path === '/home') {
-    console.log('Index.tsx - Returning null for home path');
+    console.log('Index.tsx - Returning null for authenticated user on home path');
     return null;
   }
 
