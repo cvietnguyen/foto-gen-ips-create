@@ -53,7 +53,7 @@ export const NoModelCard = ({ onTrainModel }: NoModelCardProps) => {
             </div>
           </div>
         </CardContent>
-      </div>
+      </Card>
     </div>
   );
 };
