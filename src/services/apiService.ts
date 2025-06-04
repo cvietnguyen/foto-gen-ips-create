@@ -1,4 +1,6 @@
-const API_BASE_URL = 'http://localhost:5208/api';
+import { config } from '@/config/environment';
+
+const API_BASE_URL = config.API_BASE_URL;
 
 export interface GeneratePhotoRequest {
   ModelName: string | null;
