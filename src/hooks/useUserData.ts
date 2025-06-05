@@ -18,7 +18,7 @@ export const useUserData = () => {
     if (accounts && accounts.length > 0) {
       const account = accounts[0];
       const email = (account.idTokenClaims?.email as string) || account.username;
-      const id = account.idTokenClaims?.oid as string;
+      const id = account.idTokenClaims?.sub as string;
       
       setUser({
         name: account.name,

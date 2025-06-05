@@ -14,7 +14,7 @@ import { NoModelCard } from '@/components/NoModelCard';
 
 const HomePage = () => {
   const navigate = useNavigate();
-  const { instance } = useMsal();
+  const { instance, accounts } = useMsal();
   const isAuthenticated = useIsAuthenticated();
   const { user } = useUserData();
   
@@ -34,9 +34,10 @@ const HomePage = () => {
   };
 
   const handleLogout = () => {
-    instance.logoutPopup().catch((e) => {
-      console.error(e);
-    });
+    if (accounts.length > 0) {
+      instance.clearCache();
+      window.location.reload();
+    }
   };
 
   const handleSwitchToUserModel = () => {

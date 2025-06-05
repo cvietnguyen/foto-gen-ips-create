@@ -1,6 +1,6 @@
 import { config } from '@/config/environment';
 
-const API_BASE_URL = config.API_BASE_URL;
+const API_ROOT = config.API_ROOT;
 
 export interface GeneratePhotoRequest {
   ModelName: string | null;
@@ -63,7 +63,7 @@ export const checkUserModelAvailable = async (userId?: string, modelName?: strin
     }
     
     // Build URL - only add modelName parameter if it's not null
-    let fullUrl = `${API_BASE_URL}/integration/check-user-model-available`;
+    let fullUrl = `${API_ROOT}/integration/check-user-model-available`;
     if (modelName !== null && modelName !== undefined) {
       fullUrl += `?modelName=${modelName}`;
       console.log('apiService - Added modelName to URL:', modelName);
@@ -135,7 +135,7 @@ export const generatePhoto = async (request: GeneratePhotoRequest): Promise<Gene
       Prompt: request.Prompt
     };
     
-    const response = await fetch(`${API_BASE_URL}/integration/generate-photo`, {
+    const response = await fetch(`${API_ROOT}/integration/generate-photo`, {
       method: 'POST',
       headers: headers,
       body: JSON.stringify(requestBody)
@@ -216,7 +216,7 @@ export const uploadZipFile = async (zipFile: File, modelId: string): Promise<Upl
     const formData = new FormData();
     formData.append('file', zipFile);
     console.log("here");
-    const response = await fetch(`${API_BASE_URL}/files/upload`, {
+    const response = await fetch(`${API_ROOT}/files/upload`, {
       method: 'POST',
       headers: headers,
       body: formData
@@ -269,7 +269,7 @@ export const trainModel = async (request: TrainModelRequest): Promise<TrainModel
       headers['Authorization'] = `Bearer ${token}`;
     }
     
-    const response = await fetch(`${API_BASE_URL}/integration/train-model`, {
+    const response = await fetch(`${API_ROOT}/integration/train-model`, {
       method: 'POST',
       headers: headers,
       body: JSON.stringify(request)
