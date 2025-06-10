@@ -40,6 +40,5 @@ export const msalConfig: Configuration = {
 };
 
 export const loginRequest: PopupRequest = {
-  scopes: ["openid", "profile", "email", `${import.meta.env.VITE_AZURE_CLIENT_ID}/FotoGen`],
-  prompt: "select_account",
+  scopes: ["openid", "profile", "email", `${import.meta.env.VITE_AZURE_CLIENT_ID}/FotoGen`]
 };
