@@ -10,7 +10,7 @@ interface ModelInfo {
 }
 
 export const useImageGeneration = (modelInfo: ModelInfo | null) => {
-  const [prompt, setPrompt] = useState('');
+  const [prompt, setPrompt] = useState('Dressed in dark blue suit and white shirt. Torso, arms, and complete head are visible. Arms crossed. Portrait slightly from the side. Standing in front of a clean marble color wall.');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const { toast } = useToast();
