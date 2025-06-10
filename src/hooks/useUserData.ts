@@ -35,7 +35,7 @@ export const useUserData = () => {
         setAuthToken(response.accessToken);
         console.log('JWT token stored for API calls');
       }).catch((error) => {
-        console.error('Error acquiring token:', error);
+        console.error('Error acquiring token :', error);
       });
     } else {
       setUser(null);
