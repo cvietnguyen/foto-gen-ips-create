@@ -1,3 +1,4 @@
+
 import { config } from '@/config/environment';
 import { PublicClientApplication } from '@azure/msal-browser';
 
@@ -38,12 +39,10 @@ export interface TrainModelResponse {
 }
 
 // Helper function to get auth token from MSAL
-const getAuthToken = async (): Promise<string | null> => {
+const getAuthToken = async (msalInstance: PublicClientApplication): Promise<string | null> => {
   try {
-    // Get MSAL instance from window (it's available globally)
-    const msalInstance = (window as any).msalInstance as PublicClientApplication;
     if (!msalInstance) {
-      console.error('MSAL instance not available');
+      console.error('MSAL instance not provided');
       return null;
     }
 
@@ -69,7 +68,7 @@ const getAuthToken = async (): Promise<string | null> => {
 };
 
 // 1. API to check if user has model or not
-export const checkUserModelAvailable = async (userId?: string, modelName?: string | null): Promise<CheckUserModelResponse> => {
+export const checkUserModelAvailable = async (userId?: string, modelName?: string | null, msalInstance?: PublicClientApplication): Promise<CheckUserModelResponse> => {
   try {
     console.log('apiService.checkUserModelAvailable called with:');
     console.log('  - userId:', userId);
@@ -85,7 +84,7 @@ export const checkUserModelAvailable = async (userId?: string, modelName?: strin
       };
     }
     
-    const token = await getAuthToken();
+    const token = msalInstance ? await getAuthToken(msalInstance) : null;
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
     };
@@ -148,11 +147,11 @@ export const checkUserModelAvailable = async (userId?: string, modelName?: strin
 };
 
 // 2. Generate photo from model
-export const generatePhoto = async (request: GeneratePhotoRequest): Promise<GeneratePhotoResponse> => {
+export const generatePhoto = async (request: GeneratePhotoRequest, msalInstance?: PublicClientApplication): Promise<GeneratePhotoResponse> => {
   try {
     console.log('Generating photo with request:', request);
     
-    const token = await getAuthToken();
+    const token = msalInstance ? await getAuthToken(msalInstance) : null;
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
     };
@@ -234,11 +233,11 @@ export const loginWithAzureAD = async (): Promise<{ success: boolean; token?: st
 };
 
 // 4. Upload zip file
-export const uploadZipFile = async (zipFile: File, modelId: string): Promise<UploadZipResponse> => {
+export const uploadZipFile = async (zipFile: File, modelId: string, msalInstance?: PublicClientApplication): Promise<UploadZipResponse> => {
   try {
     console.log('Uploading zip file:', zipFile.name, 'for model:', modelId);
     
-    const token = await getAuthToken();
+    const token = msalInstance ? await getAuthToken(msalInstance) : null;
     const headers: HeadersInit = {};
     
     if (token) {
@@ -288,11 +287,11 @@ export const uploadZipFile = async (zipFile: File, modelId: string): Promise<Upl
 };
 
 // 5. Train model
-export const trainModel = async (request: TrainModelRequest): Promise<TrainModelResponse> => {
+export const trainModel = async (request: TrainModelRequest, msalInstance?: PublicClientApplication): Promise<TrainModelResponse> => {
   try {
     console.log('Starting model training with request:', request);
     
-    const token = await getAuthToken();
+    const token = msalInstance ? await getAuthToken(msalInstance) : null;
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
     };
