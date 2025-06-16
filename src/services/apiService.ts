@@ -1,6 +1,6 @@
 
 import { config } from '@/config/environment';
-import { PublicClientApplication } from '@azure/msal-browser';
+import { IPublicClientApplication } from '@azure/msal-browser';
 
 const API_ROOT = config.API_ROOT;
 
@@ -39,7 +39,7 @@ export interface TrainModelResponse {
 }
 
 // Helper function to get auth token from MSAL
-const getAuthToken = async (msalInstance: PublicClientApplication): Promise<string | null> => {
+const getAuthToken = async (msalInstance: IPublicClientApplication): Promise<string | null> => {
   try {
     if (!msalInstance) {
       console.error('MSAL instance not provided');
@@ -68,7 +68,7 @@ const getAuthToken = async (msalInstance: PublicClientApplication): Promise<stri
 };
 
 // 1. API to check if user has model or not
-export const checkUserModelAvailable = async (userId?: string, modelName?: string | null, msalInstance?: PublicClientApplication): Promise<CheckUserModelResponse> => {
+export const checkUserModelAvailable = async (userId?: string, modelName?: string | null, msalInstance?: IPublicClientApplication): Promise<CheckUserModelResponse> => {
   try {
     console.log('apiService.checkUserModelAvailable called with:');
     console.log('  - userId:', userId);
@@ -147,7 +147,7 @@ export const checkUserModelAvailable = async (userId?: string, modelName?: strin
 };
 
 // 2. Generate photo from model
-export const generatePhoto = async (request: GeneratePhotoRequest, msalInstance?: PublicClientApplication): Promise<GeneratePhotoResponse> => {
+export const generatePhoto = async (request: GeneratePhotoRequest, msalInstance?: IPublicClientApplication): Promise<GeneratePhotoResponse> => {
   try {
     console.log('Generating photo with request:', request);
     
@@ -233,7 +233,7 @@ export const loginWithAzureAD = async (): Promise<{ success: boolean; token?: st
 };
 
 // 4. Upload zip file
-export const uploadZipFile = async (zipFile: File, modelId: string, msalInstance?: PublicClientApplication): Promise<UploadZipResponse> => {
+export const uploadZipFile = async (zipFile: File, modelId: string, msalInstance?: IPublicClientApplication): Promise<UploadZipResponse> => {
   try {
     console.log('Uploading zip file:', zipFile.name, 'for model:', modelId);
     
@@ -287,7 +287,7 @@ export const uploadZipFile = async (zipFile: File, modelId: string, msalInstance
 };
 
 // 5. Train model
-export const trainModel = async (request: TrainModelRequest, msalInstance?: PublicClientApplication): Promise<TrainModelResponse> => {
+export const trainModel = async (request: TrainModelRequest, msalInstance?: IPublicClientApplication): Promise<TrainModelResponse> => {
   try {
     console.log('Starting model training with request:', request);
     
