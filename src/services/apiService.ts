@@ -1,4 +1,3 @@
-
 import { config } from '@/config/environment';
 import { PublicClientApplication } from '@azure/msal-browser';
 
@@ -341,9 +340,4 @@ export const trainModel = async (request: TrainModelRequest): Promise<TrainModel
 // Legacy functions kept for backward compatibility but no longer used
 export const setAuthToken = (token: string) => {
   console.warn('setAuthToken is deprecated - tokens are now managed by MSAL');
-};
-
-export const getAuthToken = (): string | null => {
-  console.warn('getAuthToken is deprecated - use MSAL token acquisition instead');
-  return null;
 };
