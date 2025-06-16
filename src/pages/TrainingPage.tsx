@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Sparkles, Clock, Mail, Image, Upload, Loader2 } from 'lucide-react';
-import { uploadZipFile, trainModel } from '@/services/apiService';
+import { useApi } from '@/hooks/useApi';
 import { useToast } from '@/hooks/use-toast';
 import { useIsAuthenticated } from '@azure/msal-react';
 import { AuthGuard } from '@/auth/AuthGuard';
@@ -14,6 +14,7 @@ const TrainingPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const isAuthenticated = useIsAuthenticated();
+  const { uploadZipFile, trainModel } = useApi();
   
   const [isTraining, setIsTraining] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
