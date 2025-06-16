@@ -1,4 +1,6 @@
+
 import { config } from '@/config/environment';
+import { PublicClientApplication } from '@azure/msal-browser';
 
 const API_ROOT = config.API_ROOT;
 
@@ -36,6 +38,37 @@ export interface TrainModelResponse {
   modelId?: string;
 }
 
+// Helper function to get auth token from MSAL
+const getAuthToken = async (): Promise<string | null> => {
+  try {
+    // Get MSAL instance from window (it's available globally)
+    const msalInstance = (window as any).msalInstance as PublicClientApplication;
+    if (!msalInstance) {
+      console.error('MSAL instance not available');
+      return null;
+    }
+
+    const accounts = msalInstance.getAllAccounts();
+    if (accounts.length === 0) {
+      console.error('No accounts found in MSAL');
+      return null;
+    }
+
+    const account = accounts[0];
+    const tokenRequest = {
+      scopes: ["openid", "profile", "email", `${import.meta.env.VITE_AZURE_CLIENT_ID}/FotoGen`],
+      account: account
+    };
+
+    const response = await msalInstance.acquireTokenSilent(tokenRequest);
+    console.log('Token acquired silently from MSAL');
+    return response.accessToken;
+  } catch (error) {
+    console.error('Error acquiring token from MSAL:', error);
+    return null;
+  }
+};
+
 // 1. API to check if user has model or not
 export const checkUserModelAvailable = async (userId?: string, modelName?: string | null): Promise<CheckUserModelResponse> => {
   try {
@@ -53,7 +86,7 @@ export const checkUserModelAvailable = async (userId?: string, modelName?: strin
       };
     }
     
-    const token = getAuthToken();
+    const token = await getAuthToken();
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
     };
@@ -120,7 +153,7 @@ export const generatePhoto = async (request: GeneratePhotoRequest): Promise<Gene
   try {
     console.log('Generating photo with request:', request);
     
-    const token = getAuthToken();
+    const token = await getAuthToken();
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
     };
@@ -206,7 +239,7 @@ export const uploadZipFile = async (zipFile: File, modelId: string): Promise<Upl
   try {
     console.log('Uploading zip file:', zipFile.name, 'for model:', modelId);
     
-    const token = getAuthToken();
+    const token = await getAuthToken();
     const headers: HeadersInit = {};
     
     if (token) {
@@ -260,7 +293,7 @@ export const trainModel = async (request: TrainModelRequest): Promise<TrainModel
   try {
     console.log('Starting model training with request:', request);
     
-    const token = getAuthToken();
+    const token = await getAuthToken();
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
     };
@@ -305,13 +338,12 @@ export const trainModel = async (request: TrainModelRequest): Promise<TrainModel
   }
 };
 
-// Helper function to set authorization token for future requests
+// Legacy functions kept for backward compatibility but no longer used
 export const setAuthToken = (token: string) => {
-  localStorage.setItem('authToken', token);
-  console.log('Auth token set:', token);
+  console.warn('setAuthToken is deprecated - tokens are now managed by MSAL');
 };
 
-// Helper function to get authorization token
 export const getAuthToken = (): string | null => {
-  return localStorage.getItem('authToken');
+  console.warn('getAuthToken is deprecated - use MSAL token acquisition instead');
+  return null;
 };

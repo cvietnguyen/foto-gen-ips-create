@@ -1,7 +1,6 @@
 
 import { useState, useEffect } from 'react';
 import { useMsal } from '@azure/msal-react';
-import { setAuthToken } from '@/services/apiService';
 
 export interface User {
   name?: string;
@@ -27,16 +26,7 @@ export const useUserData = () => {
         id: id
       });
 
-      // Get and store the access token
-      instance.acquireTokenSilent({
-        scopes: ["openid", "profile", "email"],
-        account: account
-      }).then((response) => {
-        setAuthToken(response.accessToken);
-        console.log('JWT token stored for API calls');
-      }).catch((error) => {
-        console.error('Error acquiring token :', error);
-      });
+      console.log('User data set from MSAL account');
     } else {
       setUser(null);
     }

@@ -16,6 +16,9 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 const msalInstance = new PublicClientApplication(msalConfig);
 
+// Make MSAL instance globally available for token acquisition
+(window as any).msalInstance = msalInstance;
+
 const App = () => (
   <MsalProvider instance={msalInstance}>
     <QueryClientProvider client={queryClient}>
