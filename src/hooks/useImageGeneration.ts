@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { generatePhoto } from '@/services/apiService';
+import { useApi } from '@/hooks/useApi';
 import { useToast } from '@/hooks/use-toast';
 
 interface ModelInfo {
@@ -14,6 +14,7 @@ export const useImageGeneration = (modelInfo: ModelInfo | null) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const { toast } = useToast();
+  const { generatePhoto } = useApi();
 
   const handleGenerate = async () => {
     if (!prompt.trim() || !modelInfo) return;

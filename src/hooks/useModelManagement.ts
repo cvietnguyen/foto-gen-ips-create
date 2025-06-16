@@ -1,8 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import { useMsal } from '@azure/msal-react';
-import { checkUserModelAvailable } from '@/services/apiService';
+import { useApi } from '@/hooks/useApi';
 import { useToast } from '@/hooks/use-toast';
 import { User } from '@/hooks/useUserData';
 
@@ -17,7 +16,7 @@ export const useModelManagement = (user: User | null, isAuthenticated: boolean) 
   const { username, modelName } = useParams();
   const location = useLocation();
   const { toast } = useToast();
-  const { instance } = useMsal();
+  const { checkUserModelAvailable } = useApi();
   
   const [userHasModel, setUserHasModel] = useState<boolean>(false);
   const [modelInfo, setModelInfo] = useState<ModelInfo | null>(null);
@@ -61,7 +60,7 @@ export const useModelManagement = (user: User | null, isAuthenticated: boolean) 
       console.log('useModelManagement - User not authenticated, setting loading to false');
       setIsLoadingModel(false);
     }
-  }, [isAuthenticated, user?.id, username, modelName, location.pathname, instance]);
+  }, [isAuthenticated, user?.id, username, modelName, location.pathname, checkUserModelAvailable]);
 
   const checkOtherUserModel = async (modelId: string, ownerName: string) => {
     console.log('checkOtherUserModel called with:', { modelId, ownerName, userId: user?.id });
@@ -75,7 +74,7 @@ export const useModelManagement = (user: User | null, isAuthenticated: boolean) 
     try {
       // Pass the specific model ID from URL to the API
       console.log('checkOtherUserModel - Checking other user model with modelId:', modelId);
-      const response = await checkUserModelAvailable(user.id, modelId, instance);
+      const response = await checkUserModelAvailable(user.id, modelId);
       console.log('checkOtherUserModel - API response:', response);
       
       if (response.success && response.hasModel) {
@@ -126,7 +125,7 @@ export const useModelManagement = (user: User | null, isAuthenticated: boolean) 
     try {
       // For user's own model, pass null to let backend find it
       console.log('checkUserModel - Checking user own model, passing null to API');
-      const response = await checkUserModelAvailable(user.id, null, instance);
+      const response = await checkUserModelAvailable(user.id, null);
       console.log('checkUserModel - API response:', response);
       
       if (response.success) {
