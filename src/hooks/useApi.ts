@@ -1,4 +1,3 @@
-
 import { useCallback } from 'react';
 import { useMsal } from '@azure/msal-react';
 import { config } from '@/config/environment';
@@ -214,28 +213,6 @@ export const useApi = () => {
     }
   }, [getAuthToken]);
 
-  // 3. Azure AD login (placeholder - actual implementation would use MSAL or similar)
-  const loginWithAzureAD = useCallback(async (): Promise<{ success: boolean; token?: string; message?: string }> => {
-    try {
-      console.log('Initiating Azure AD login...');
-      
-      // Simulate Azure AD login process
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      return {
-        success: true,
-        token: 'dummy-azure-ad-token-' + Date.now(),
-        message: 'Successfully logged in with Azure AD'
-      };
-    } catch (error) {
-      console.error('Error with Azure AD login:', error);
-      return {
-        success: false,
-        message: 'Failed to login with Azure AD'
-      };
-    }
-  }, []);
-
   // 4. Upload zip file
   const uploadZipFile = useCallback(async (zipFile: File, modelId: string): Promise<UploadZipResponse> => {
     try {
@@ -343,7 +320,6 @@ export const useApi = () => {
   return {
     checkUserModelAvailable,
     generatePhoto,
-    loginWithAzureAD,
     uploadZipFile,
     trainModel
   };
