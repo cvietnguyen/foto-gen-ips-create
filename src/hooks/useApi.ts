@@ -13,6 +13,7 @@ export interface GeneratePhotoResponse {
   imageUrl: string;
   success: boolean;
   message?: string;
+  errorCode?: string;
 }
 
 export interface CheckUserModelResponse {
@@ -193,7 +194,8 @@ export const useApi = () => {
           return {
             imageUrl: '',
             success: false,
-            message: data.message || 'Failed to generate photo'
+            message: data.message || 'Failed to generate photo',
+            errorCode: data.errorCode
           };
         }
       } else {
