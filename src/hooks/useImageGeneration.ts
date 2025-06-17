@@ -27,6 +27,8 @@ export const useImageGeneration = (modelInfo: ModelInfo | null) => {
         Prompt: prompt
       });
       
+      console.log('Generate photo response:', response);
+      
       if (response.success && response.imageUrl) {
         setGeneratedImage(response.imageUrl);
         toast({
@@ -35,7 +37,9 @@ export const useImageGeneration = (modelInfo: ModelInfo | null) => {
         });
       } else {
         // Check if the error is about reaching generation limitations
+        console.log('Checking errorCode:', response.errorCode);
         if (response.errorCode === 'ReachPhotoGenerationLimitation') {
+          console.log('Setting showLimitationDialog to true');
           setShowLimitationDialog(true);
         } else {
           throw new Error(response.message || 'Failed to generate image');

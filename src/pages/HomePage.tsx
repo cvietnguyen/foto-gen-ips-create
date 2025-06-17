@@ -30,6 +30,9 @@ const HomePage = () => {
     setShowLimitationDialog
   } = useImageGeneration(modelInfo);
 
+  // Add debug logging
+  console.log('HomePage - showLimitationDialog:', showLimitationDialog);
+
   // Redirect to login if not authenticated
   useEffect(() => {
     if (!isAuthenticated) {
@@ -116,6 +119,11 @@ const HomePage = () => {
             <NoModelCard onTrainModel={handleTrainModel} />
           )}
         </main>
+
+        {/* Debug: Always show the dialog state */}
+        <div className="fixed bottom-4 right-4 bg-white p-2 rounded shadow text-xs">
+          Dialog state: {showLimitationDialog ? 'true' : 'false'}
+        </div>
 
         <LimitationDialog 
           open={showLimitationDialog}
