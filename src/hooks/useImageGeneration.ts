@@ -14,6 +14,7 @@ export const useImageGeneration = (modelInfo: ModelInfo | null) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [showLimitationDialog, setShowLimitationDialog] = useState(false);
+  const [limitationCount, setLimitationCount] = useState<string | number | null>(null);
   const { toast } = useToast();
   const { generatePhoto } = useApi();
 
@@ -40,6 +41,8 @@ export const useImageGeneration = (modelInfo: ModelInfo | null) => {
         console.log('Checking errorCode:', response.errorCode);
         if (response.errorCode === 'ReachPhotoGenerationLimitation') {
           console.log('Setting showLimitationDialog to true');
+          console.log('Limitation count from message:', response.message);
+          setLimitationCount(response.message);
           setShowLimitationDialog(true);
         } else {
           throw new Error(response.message || 'Failed to generate image');
@@ -64,6 +67,7 @@ export const useImageGeneration = (modelInfo: ModelInfo | null) => {
     generatedImage,
     handleGenerate,
     showLimitationDialog,
-    setShowLimitationDialog
+    setShowLimitationDialog,
+    limitationCount
   };
 };

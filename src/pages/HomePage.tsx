@@ -27,7 +27,8 @@ const HomePage = () => {
     generatedImage, 
     handleGenerate,
     showLimitationDialog,
-    setShowLimitationDialog
+    setShowLimitationDialog,
+    limitationCount
   } = useImageGeneration(modelInfo);
 
   // Add debug logging
@@ -128,6 +129,7 @@ const HomePage = () => {
         <LimitationDialog 
           open={showLimitationDialog}
           onOpenChange={setShowLimitationDialog}
+          limitationCount={limitationCount}
         />
       </div>
     </AuthGuard>

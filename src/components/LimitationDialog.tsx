@@ -14,9 +14,12 @@ import { AlertTriangle } from 'lucide-react';
 interface LimitationDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  limitationCount?: string | number;
 }
 
-export const LimitationDialog = ({ open, onOpenChange }: LimitationDialogProps) => {
+export const LimitationDialog = ({ open, onOpenChange, limitationCount }: LimitationDialogProps) => {
+  const displayCount = limitationCount || 2;
+  
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent className="sm:max-w-md">
@@ -26,7 +29,7 @@ export const LimitationDialog = ({ open, onOpenChange }: LimitationDialogProps) 
             <AlertDialogTitle>Generation Limit Reached</AlertDialogTitle>
           </div>
           <AlertDialogDescription className="text-left">
-            You've reached your photo generation limit of 2 images. Please try again later or upgrade your plan to generate more images.
+            You've reached your photo generation limit of {displayCount} images. Please try again later or upgrade your plan to generate more images.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
