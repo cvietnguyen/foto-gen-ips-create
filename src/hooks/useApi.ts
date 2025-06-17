@@ -176,33 +176,28 @@ export const useApi = () => {
         body: JSON.stringify(requestBody)
       });
       
-      if (response.ok) {
-        const data = await response.json();
+      // Always try to parse the response body, regardless of status
+      const data = await response.json();
+      console.log('API response data:', data);
+      
+      if (response.ok && data.isSuccess) {
+        // Convert base64 to data URL for display
+        const base64Image = data.data.base64Image;
+        const outputFormat = data.data.outputFormat || 'jpg';
+        const imageUrl = `data:image/${outputFormat};base64,${base64Image}`;
         
-        if (data.isSuccess) {
-          // Convert base64 to data URL for display
-          const base64Image = data.data.base64Image;
-          const outputFormat = data.data.outputFormat || 'jpg';
-          const imageUrl = `data:image/${outputFormat};base64,${base64Image}`;
-          
-          return {
-            imageUrl: imageUrl,
-            success: true,
-            message: data.message || 'Image generated successfully'
-          };
-        } else {
-          return {
-            imageUrl: '',
-            success: false,
-            message: data.message || 'Failed to generate photo',
-            errorCode: data.errorCode
-          };
-        }
+        return {
+          imageUrl: imageUrl,
+          success: true,
+          message: data.message || 'Image generated successfully'
+        };
       } else {
+        // Handle error responses - extract errorCode from response body
         return {
           imageUrl: '',
           success: false,
-          message: `Generation failed with status: ${response.status}`
+          message: data.message || `Generation failed with status: ${response.status}`,
+          errorCode: data.errorCode
         };
       }
     } catch (error) {
