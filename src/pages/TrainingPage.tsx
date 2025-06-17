@@ -8,6 +8,7 @@ import { useApi } from '@/hooks/useApi';
 import { useToast } from '@/hooks/use-toast';
 import { useIsAuthenticated } from '@azure/msal-react';
 import { AuthGuard } from '@/auth/AuthGuard';
+import { LimitationDialog } from '@/components/LimitationDialog';
 import JSZip from 'jszip';
 
 const TrainingPage = () => {
@@ -21,6 +22,8 @@ const TrainingPage = () => {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [currentStep, setCurrentStep] = useState<'upload' | 'training' | 'complete'>('upload');
+  const [showLimitationDialog, setShowLimitationDialog] = useState(false);
+  const [limitationCount, setLimitationCount] = useState<string | number | null>(null);
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -112,7 +115,18 @@ const TrainingPage = () => {
           // Don't reset isTraining here, let the training state persist
         }, 1000);
       } else {
-        throw new Error(trainResponse.message || 'Training failed to start');
+        // Check if the error is about reaching training limitations
+        console.log('Checking training errorCode:', trainResponse.errorCode);
+        if (trainResponse.errorCode === 'ReachTrainingLimitation') {
+          console.log('Setting showLimitationDialog to true for training');
+          console.log('Training limitation count from message:', trainResponse.message);
+          setLimitationCount(trainResponse.message);
+          setShowLimitationDialog(true);
+          setIsTraining(false);
+          setCurrentStep('upload');
+        } else {
+          throw new Error(trainResponse.message || 'Training failed to start');
+        }
       }
     } catch (error) {
       console.error('Training error:', error);
@@ -292,6 +306,12 @@ const TrainingPage = () => {
             </CardContent>
           </Card>
         </main>
+
+        <LimitationDialog 
+          open={showLimitationDialog}
+          onOpenChange={setShowLimitationDialog}
+          limitationCount={limitationCount}
+        />
       </div>
     </AuthGuard>
   );

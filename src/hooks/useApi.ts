@@ -37,6 +37,7 @@ export interface TrainModelResponse {
   success: boolean;
   message?: string;
   modelId?: string;
+  errorCode?: string;
 }
 
 export const useApi = () => {
@@ -284,25 +285,22 @@ export const useApi = () => {
         body: JSON.stringify(request)
       });
       
-      if (response.ok) {
-        const data = await response.json();
-        
-        if (data.isSuccess) {
-          return {
-            success: true,
-            message: data.message || 'Model training started successfully',
-            modelId: data.data
-          };
-        } else {
-          return {
-            success: false,
-            message: data.message || 'Training failed to start'
-          };
-        }
+      // Always try to parse the response body, regardless of status
+      const data = await response.json();
+      console.log('Train model API response data:', data);
+      
+      if (response.ok && data.isSuccess) {
+        return {
+          success: true,
+          message: data.message || 'Model training started successfully',
+          modelId: data.data
+        };
       } else {
+        // Handle error responses - extract errorCode from response body
         return {
           success: false,
-          message: `Training failed with status: ${response.status}`
+          message: data.message || `Training failed with status: ${response.status}`,
+          errorCode: data.errorCode
         };
       }
     } catch (error) {
