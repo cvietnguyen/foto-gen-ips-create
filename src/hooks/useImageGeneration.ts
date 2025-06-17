@@ -34,8 +34,8 @@ export const useImageGeneration = (modelInfo: ModelInfo | null) => {
           description: 'Image generated successfully!',
         });
       } else {
-        // Check if the error is about reaching generation limitations (errorCode: 11)
-        if (response.errorCode === 11) {
+        // Check if the error is about reaching generation limitations
+        if (response.message && response.message.includes('Photo Generation Limitations')) {
           setShowLimitationDialog(true);
         } else {
           throw new Error(response.message || 'Failed to generate image');
