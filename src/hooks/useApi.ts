@@ -13,6 +13,7 @@ export interface GeneratePhotoResponse {
   imageUrl: string;
   success: boolean;
   message?: string;
+  errorCode?: number;
 }
 
 export interface CheckUserModelResponse {
