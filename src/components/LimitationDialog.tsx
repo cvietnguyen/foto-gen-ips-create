@@ -15,10 +15,23 @@ interface LimitationDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   limitationCount?: string | number;
+  type: 'training' | 'generation';
 }
 
-export const LimitationDialog = ({ open, onOpenChange, limitationCount }: LimitationDialogProps) => {
+export const LimitationDialog = ({ open, onOpenChange, limitationCount, type }: LimitationDialogProps) => {
   const displayCount = limitationCount || 2;
+  
+  const getTitle = () => {
+    return type === 'training' ? 'Training Limit Reached' : 'Generation Limit Reached';
+  };
+  
+  const getMessage = () => {
+    if (type === 'training') {
+      return `You've reached your training model limit of ${displayCount} images. Please try again later.`;
+    } else {
+      return `You've reached your photo generation limit of ${displayCount} images. Please try again later.`;
+    }
+  };
   
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -26,10 +39,10 @@ export const LimitationDialog = ({ open, onOpenChange, limitationCount }: Limita
         <AlertDialogHeader>
           <div className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-orange-500" />
-            <AlertDialogTitle>Generation Limit Reached</AlertDialogTitle>
+            <AlertDialogTitle>{getTitle()}</AlertDialogTitle>
           </div>
           <AlertDialogDescription className="text-left">
-            You've reached your photo generation limit of {displayCount} images. Please try again later or upgrade your plan to generate more images.
+            {getMessage()}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

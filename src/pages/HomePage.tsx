@@ -130,6 +130,7 @@ const HomePage = () => {
           open={showLimitationDialog}
           onOpenChange={setShowLimitationDialog}
           limitationCount={limitationCount}
+          type="generation"
         />
       </div>
     </AuthGuard>

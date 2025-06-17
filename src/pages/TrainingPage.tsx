@@ -311,6 +311,7 @@ const TrainingPage = () => {
           open={showLimitationDialog}
           onOpenChange={setShowLimitationDialog}
           limitationCount={limitationCount}
+          type="training"
         />
       </div>
     </AuthGuard>
