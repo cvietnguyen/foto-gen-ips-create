@@ -13,6 +13,7 @@ export const useImageGeneration = (modelInfo: ModelInfo | null) => {
   const [prompt, setPrompt] = useState('Dressed in dark blue suit and white shirt. Torso, arms, and complete head are visible. Arms crossed. Portrait slightly from the side. Standing in front of a clean marble color wall.');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+  const [showLimitationDialog, setShowLimitationDialog] = useState(false);
   const { toast } = useToast();
   const { generatePhoto } = useApi();
 
@@ -33,7 +34,12 @@ export const useImageGeneration = (modelInfo: ModelInfo | null) => {
           description: 'Image generated successfully!',
         });
       } else {
-        throw new Error(response.message || 'Failed to generate image');
+        // Check if the error is about reaching generation limitations
+        if (response.message && response.message.includes('Photo Generation Limitations')) {
+          setShowLimitationDialog(true);
+        } else {
+          throw new Error(response.message || 'Failed to generate image');
+        }
       }
     } catch (error) {
       console.error('Error generating image:', error);
@@ -52,6 +58,8 @@ export const useImageGeneration = (modelInfo: ModelInfo | null) => {
     setPrompt,
     isGenerating,
     generatedImage,
-    handleGenerate
+    handleGenerate,
+    showLimitationDialog,
+    setShowLimitationDialog
   };
 };

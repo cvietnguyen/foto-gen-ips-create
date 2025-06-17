@@ -11,6 +11,7 @@ import { ModelInfoSection } from '@/components/ModelInfo';
 import { ImageGenerator } from '@/components/ImageGenerator';
 import { GeneratedImage } from '@/components/GeneratedImage';
 import { NoModelCard } from '@/components/NoModelCard';
+import { LimitationDialog } from '@/components/LimitationDialog';
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -19,7 +20,15 @@ const HomePage = () => {
   const { user } = useUserData();
   
   const { userHasModel, modelInfo, isLoadingModel } = useModelManagement(user, isAuthenticated);
-  const { prompt, setPrompt, isGenerating, generatedImage, handleGenerate } = useImageGeneration(modelInfo);
+  const { 
+    prompt, 
+    setPrompt, 
+    isGenerating, 
+    generatedImage, 
+    handleGenerate,
+    showLimitationDialog,
+    setShowLimitationDialog
+  } = useImageGeneration(modelInfo);
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -107,6 +116,11 @@ const HomePage = () => {
             <NoModelCard onTrainModel={handleTrainModel} />
           )}
         </main>
+
+        <LimitationDialog 
+          open={showLimitationDialog}
+          onOpenChange={setShowLimitationDialog}
+        />
       </div>
     </AuthGuard>
   );
