@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useIsAuthenticated } from '@azure/msal-react';
 import { AuthGuard } from '@/auth/AuthGuard';
 import { LimitationDialog } from '@/components/LimitationDialog';
+import { SizeErrorDialog } from '@/components/SizeErrorDialog';
 import JSZip from 'jszip';
 
 const TrainingPage = () => {
@@ -24,6 +25,8 @@ const TrainingPage = () => {
   const [currentStep, setCurrentStep] = useState<'upload' | 'training' | 'complete'>('upload');
   const [showLimitationDialog, setShowLimitationDialog] = useState(false);
   const [limitationCount, setLimitationCount] = useState<string | number | null>(null);
+  const [showSizeErrorDialog, setShowSizeErrorDialog] = useState(false);
+  const [totalImageSize, setTotalImageSize] = useState(0);
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -35,6 +38,10 @@ const TrainingPage = () => {
 
   const generateModelId = () => {
     return 'model-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+  };
+
+  const calculateTotalSize = (files: File[]): number => {
+    return files.reduce((total, file) => total + file.size, 0);
   };
 
   const createZipFile = async (files: File[], modelId: string): Promise<File> => {
@@ -56,6 +63,18 @@ const TrainingPage = () => {
     if (!files || files.length === 0) return;
 
     const fileArray = Array.from(files);
+    const totalSize = calculateTotalSize(fileArray);
+    const maxSize = 3 * 1024 * 1024; // 3MB in bytes
+
+    // Check if total size exceeds 3MB
+    if (totalSize > maxSize) {
+      setTotalImageSize(totalSize);
+      setShowSizeErrorDialog(true);
+      // Clear the input
+      event.target.value = '';
+      return;
+    }
+
     setUploadedFiles(fileArray);
     
     const urls = fileArray.map(file => URL.createObjectURL(file));
@@ -65,6 +84,13 @@ const TrainingPage = () => {
       title: 'Images Selected',
       description: `${fileArray.length} images selected and ready for training.`,
     });
+  };
+
+  const handleSizeErrorDialogClose = () => {
+    setShowSizeErrorDialog(false);
+    // Clear any previously uploaded files and preview URLs
+    setUploadedFiles([]);
+    setPreviewUrls([]);
   };
 
   const handleStartTraining = async () => {
@@ -246,6 +272,7 @@ const TrainingPage = () => {
                     <ul className="text-sm space-y-1" style={{ color: '#125597' }}>
                       <li>• Upload 10-20 high-quality images</li>
                       <li>• Supported formats: JPG, PNG</li>
+                      <li>• Maximum total size: 3MB</li>
                       <li>• Training takes approximately 20 minutes</li>
                     </ul>
                   </div>
@@ -312,6 +339,12 @@ const TrainingPage = () => {
           onOpenChange={setShowLimitationDialog}
           limitationCount={limitationCount}
           type="training"
+        />
+
+        <SizeErrorDialog
+          open={showSizeErrorDialog}
+          onOpenChange={handleSizeErrorDialogClose}
+          totalSize={totalImageSize}
         />
       </div>
     </AuthGuard>
