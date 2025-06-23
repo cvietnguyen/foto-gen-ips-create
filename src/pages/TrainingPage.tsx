@@ -64,9 +64,9 @@ const TrainingPage = () => {
 
     const fileArray = Array.from(files);
     const totalSize = calculateTotalSize(fileArray);
-    const maxSize = 3 * 1024 * 1024; // 3MB in bytes
+    const maxSize = 200 * 1024 * 1024; // 200MB in bytes
 
-    // Check if total size exceeds 3MB
+    // Check if total size exceeds 200MB
     if (totalSize > maxSize) {
       setTotalImageSize(totalSize);
       setShowSizeErrorDialog(true);
@@ -272,7 +272,7 @@ const TrainingPage = () => {
                     <ul className="text-sm space-y-1" style={{ color: '#125597' }}>
                       <li>• Upload 10-20 high-quality images</li>
                       <li>• Supported formats: JPG, PNG</li>
-                      <li>• Maximum total size: 3MB</li>
+                      <li>• Maximum total size: 200MB</li>
                       <li>• Training takes approximately 20 minutes</li>
                     </ul>
                   </div>

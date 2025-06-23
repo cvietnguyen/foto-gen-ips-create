@@ -31,7 +31,7 @@ export const SizeErrorDialog = ({ open, onOpenChange, totalSize }: SizeErrorDial
             <AlertDialogTitle>Images Too Large</AlertDialogTitle>
           </div>
           <AlertDialogDescription className="text-left">
-            The total size of selected images is {formatFileSize(totalSize)}MB, which exceeds the 3MB limit. Please select smaller images or fewer images.
+            The total size of selected images is {formatFileSize(totalSize)}MB, which exceeds the 200MB limit. Please select smaller images or fewer images.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
