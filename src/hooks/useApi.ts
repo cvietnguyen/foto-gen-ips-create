@@ -1,3 +1,4 @@
+
 import { useCallback } from 'react';
 import { useMsal } from '@azure/msal-react';
 import { config } from '@/config/environment';
@@ -225,7 +226,7 @@ export const useApi = () => {
       
       const formData = new FormData();
       formData.append('file', zipFile);
-      console.log("here");
+      
       const response = await fetch(`${API_ROOT}/files/upload`, {
         method: 'POST',
         headers: headers,
