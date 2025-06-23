@@ -28,7 +28,6 @@ export const ModelInfoSection = ({ modelInfo, onTrainModel, onSwitchToUserModel 
         <span className="text-sm">
           Model by: <strong>{modelInfo.ownerName}</strong>
         </span>
-        <span className="text-xs text-gray-500">({modelInfo.id})</span>
       </Badge>
       
       {modelInfo.isOwnedByUser ? (
