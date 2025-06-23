@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { ZoomIn, ZoomOut, Download } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -12,7 +12,11 @@ interface ImageViewerProps {
 
 export const ImageViewer = ({ src, alt, className = "" }: ImageViewerProps) => {
   const [zoom, setZoom] = useState(100);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const { toast } = useToast();
+  const imageRef = useRef<HTMLImageElement>(null);
 
   const handleZoomIn = () => {
     if (zoom < 200) {
@@ -22,9 +26,43 @@ export const ImageViewer = ({ src, alt, className = "" }: ImageViewerProps) => {
 
   const handleZoomOut = () => {
     if (zoom > 50) {
-      setZoom(prev => Math.max(prev - 25, 50));
+      const newZoom = Math.max(zoom - 25, 50);
+      setZoom(newZoom);
+      // Reset position when zooming out to 100% or less
+      if (newZoom <= 100) {
+        setPosition({ x: 0, y: 0 });
+      }
     }
   };
+
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    if (zoom > 100) {
+      setIsDragging(true);
+      setDragStart({
+        x: e.clientX - position.x,
+        y: e.clientY - position.y
+      });
+      e.preventDefault();
+    }
+  }, [zoom, position]);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (isDragging && zoom > 100) {
+      const newX = e.clientX - dragStart.x;
+      const newY = e.clientY - dragStart.y;
+      
+      // Add constraints to prevent dragging too far
+      const maxOffset = (zoom - 100) * 2;
+      const constrainedX = Math.max(Math.min(newX, maxOffset), -maxOffset);
+      const constrainedY = Math.max(Math.min(newY, maxOffset), -maxOffset);
+      
+      setPosition({ x: constrainedX, y: constrainedY });
+    }
+  }, [isDragging, dragStart, zoom]);
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+  }, []);
 
   const handleDownload = async () => {
     try {
@@ -86,15 +124,25 @@ export const ImageViewer = ({ src, alt, className = "" }: ImageViewerProps) => {
         </Button>
       </div>
       
-      <div className="overflow-auto max-h-full">
+      <div 
+        className="overflow-hidden max-h-full"
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+      >
         <img 
+          ref={imageRef}
           src={src} 
           alt={alt}
-          className="w-full h-full object-cover rounded-lg transition-transform duration-200"
+          className={`w-full h-full object-cover rounded-lg transition-transform duration-200 ${
+            zoom > 100 ? 'cursor-grab active:cursor-grabbing' : ''
+          } ${isDragging ? 'cursor-grabbing' : ''}`}
           style={{ 
-            transform: `scale(${zoom / 100})`,
+            transform: `scale(${zoom / 100}) translate(${position.x}px, ${position.y}px)`,
             transformOrigin: 'center'
           }}
+          onMouseDown={handleMouseDown}
+          draggable={false}
         />
       </div>
       
