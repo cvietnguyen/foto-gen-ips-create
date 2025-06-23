@@ -2,6 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Image as ImageIcon, Loader2 } from 'lucide-react';
+import { ImageViewer } from './ImageViewer';
 
 interface GeneratedImageProps {
   generatedImage: string | null;
@@ -25,10 +26,10 @@ export const GeneratedImage = ({ generatedImage, isGenerating }: GeneratedImageP
               <p className="text-sm text-gray-500">Creating your image...</p>
             </div>
           ) : generatedImage ? (
-            <img 
+            <ImageViewer 
               src={generatedImage} 
               alt="Generated" 
-              className="w-full h-full object-cover rounded-lg"
+              className="w-full h-full"
             />
           ) : (
             <div className="text-center text-gray-400">
