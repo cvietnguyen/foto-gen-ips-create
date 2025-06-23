@@ -77,7 +77,7 @@ export const LoginButton = () => {
       style={{ background: `linear-gradient(to right, #17428c, #125597)` }}
     >
       <Building className="h-5 w-5" />
-      Sign in with Entra ID
+      Sign in with Microsoft Entra ID
     </Button>
   );
 };
