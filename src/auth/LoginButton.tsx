@@ -3,6 +3,7 @@ import { useMsal } from "@azure/msal-react";
 import { useNavigate } from "react-router-dom";
 import { loginRequest } from "./authConfig";
 import { Button } from '@/components/ui/button';
+import { Building } from 'lucide-react';
 
 export const LoginButton = () => {
   const { instance } = useMsal();
@@ -72,10 +73,11 @@ export const LoginButton = () => {
   return (
     <Button 
       onClick={handleLogin}
-      className="w-full text-white font-semibold py-6 text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
+      className="w-full text-white font-semibold py-6 text-lg transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center gap-2"
       style={{ background: `linear-gradient(to right, #17428c, #125597)` }}
     >
-      Sign in with Azure AD
+      <Building className="h-5 w-5" />
+      Sign in with Entra ID
     </Button>
   );
 };
