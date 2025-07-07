@@ -139,19 +139,9 @@ export const useModelManagement = (user: User | null, isAuthenticated: boolean) 
         }
       } else {
         console.error('checkUserModel - Failed to check user model:', response.message);
-        toast({
-          title: 'Error',
-          description: 'Failed to check model availability',
-          variant: 'destructive',
-        });
       }
     } catch (error) {
       console.error('checkUserModel - Error checking user model:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to check model availability',
-        variant: 'destructive',
-      });
     } finally {
       setIsLoadingModel(false);
     }
